@@ -21,19 +21,19 @@ public class ParaboxWorldData {
     private final UUID worldId;
 
     @Expose
-    private boolean shouldDelte = false;
+    private boolean shouldDelete = false;
 
     @Expose
     private final Map<UUID, ParaboxUserData> confirmations = new HashMap<>();
 
-    public boolean isShouldDelte () {
+    public boolean isShouldDelete () {
 
-        return this.shouldDelte;
+        return this.shouldDelete;
     }
 
-    public void setShouldDelte (boolean shouldDelte) {
+    public void setShouldDelete (boolean shouldDelete) {
 
-        this.shouldDelte = shouldDelte;
+        this.shouldDelete = shouldDelete;
     }
 
     public ParaboxUserData getUserData (UUID userId) {

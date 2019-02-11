@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketRefreshGui extends SerializableMessage {
+public class PacketRefreshGui extends SerializableMessage<PacketRefreshGui> {
 
     public PacketRefreshGui () {
 

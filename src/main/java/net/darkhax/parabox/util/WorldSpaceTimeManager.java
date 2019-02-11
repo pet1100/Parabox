@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
-
 import com.jarhax.prestige.data.GlobalPrestigeData;
 import com.jarhax.prestige.data.PlayerData;
 
@@ -61,16 +59,16 @@ public class WorldSpaceTimeManager {
         Parabox.LOG.info("Saving Parabox world data.");
         currentWorldData.save(currentSaveRootDirectory);
 
-        if (currentWorldData.isShouldDelte()) {
+        if (currentWorldData.isShouldDelete()) {
 
             Parabox.LOG.info("World has been marked for deletion. Starting world loop process.");
 
             try {
 
                 Parabox.LOG.info("Deleting the current world file.");
-                FileUtils.deleteDirectory(currentSaveRootDirectory);
+                BlacklistedFileUtils.delete(currentSaveRootDirectory);
                 Parabox.LOG.info("Restoring the initial world backup.");
-                ZipUtils.unzipFolder(currentWorldData.getBackupFile(), currentSaveRootDirectory.getParentFile());
+                BlacklistedFileUtils.unzipFolder(currentWorldData.getBackupFile(), currentSaveRootDirectory.getParentFile());
                 currentWorldData.getBackupFile().delete();
 
                 for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
@@ -105,6 +103,7 @@ public class WorldSpaceTimeManager {
         for (final EntityPlayerMP player : server.getMinecraftServer().getPlayerList().getPlayers()) {
 
             player.connection.disconnect(new TextComponentString("The world is collapsing!"));
+            Parabox.proxy.onGameShutdown();
         }
 
         if (!currentWorldData.getBackupFile().exists()) {
@@ -122,7 +121,7 @@ public class WorldSpaceTimeManager {
             }
         }
 
-        currentWorldData.setShouldDelte(true);
+        currentWorldData.setShouldDelete(true);
         WorldHelper.shutdown();
     }
 

@@ -12,6 +12,8 @@ import net.darkhax.parabox.gui.GuiHandler;
 import net.darkhax.parabox.network.PacketActivate;
 import net.darkhax.parabox.network.PacketConfirmReset;
 import net.darkhax.parabox.network.PacketRefreshGui;
+import net.darkhax.parabox.proxy.Proxy;
+import net.darkhax.parabox.util.BlacklistedFileUtils;
 import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,9 +21,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
@@ -42,6 +47,9 @@ public class Parabox {
 
     @Instance(MODID)
     public static Parabox instance;
+    
+    @SidedProxy(clientSide = "net.darkhax.parabox.proxy.ClientProxy", serverSide = "net.darkhax.parbox.proxy.Proxy")
+    public static Proxy proxy;
 
     @EventHandler
     public void onPreInit (FMLPreInitializationEvent event) {
@@ -54,6 +62,11 @@ public class Parabox {
         this.blockParabox = new BlockParabox();
         REGISTRY.registerBlock(this.blockParabox, new ItemBlockParabox(this.blockParabox), "parabox");
         GameRegistry.registerTileEntity(TileEntityParabox.class, new ResourceLocation(MODID, "parabox"));
+        Configuration c = new Configuration(event.getSuggestedConfigurationFile());
+        for(String s : c.getStringList("Backup Blacklist", "general", new String[] {"playerdata", "advancements", "level.dat" }, "The names of files/folders that will not be restored by a state backup."))
+        	BlacklistedFileUtils.IGNORED.add(s);
+        if(c.hasChanged()) c.save();
+        MinecraftForge.EVENT_BUS.register(proxy);
     }
 
     @EventHandler
