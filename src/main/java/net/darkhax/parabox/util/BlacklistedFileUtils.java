@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.FileUtils;
 
 import net.darkhax.parabox.util.ZipUtils.MyZipFile;
@@ -25,13 +25,13 @@ public class BlacklistedFileUtils {
 
 	public static FileFilter filter = f -> !IGNORED.contains(f.getName());
 	
-    public static void unzipFolder (File archiveFile, File zipDestinationFolder) {
+    public static void unzipFolder (File File, File zipDestinationFolder) {
 
-        try (MyZipFile zipFile = new MyZipFile(archiveFile)) {
+        try (MyZipFile zipFile = new MyZipFile(File)) {
 
-            final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                final ZipArchiveEntry zipEntry = entries.nextElement();
+                final ZipEntry zipEntry = entries.nextElement();
 
                 String name = zipEntry.getName();
                 if(isBlacklisted(name)) continue;

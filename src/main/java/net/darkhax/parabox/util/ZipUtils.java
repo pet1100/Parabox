@@ -23,12 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Utility to Zip and Unzip nested directories recursively. Author of 1st version is:
@@ -38,9 +38,9 @@ import org.apache.commons.io.FileUtils;
  */
 public class ZipUtils {
     /*
-     * @param directoryPath The path of the directory where the archive will be created. eg.
+     * @param directoryPath The path of the directory where the  will be created. eg.
      * c:/temp
-     * @param zipFile The full path of the archive to create. eg. c:/temp/archive.zip
+     * @param zipFile The full path of the  to create. eg. c:/temp/.zip
      */
     public static void createZip (String directoryPath, String zipPath) throws IOException {
 
@@ -51,14 +51,14 @@ public class ZipUtils {
      * Creates a zip file at the specified path with the contents of the specified directory.
      * NB:
      *
-     * @param directory The path of the directory where the archive will be created. eg.
+     * @param directory The path of the directory where the  will be created. eg.
      *        c:/temp
      * @param zipFile zip file
      * @throws IOException If anything goes wrong
      */
     public static void createZip (File directory, File zipFile) throws IOException {
 
-        try (FileOutputStream fOut = new FileOutputStream(zipFile); BufferedOutputStream bOut = new BufferedOutputStream(fOut); ZipArchiveOutputStream tOut = new ZipArchiveOutputStream(bOut)) {
+        try (FileOutputStream fOut = new FileOutputStream(zipFile); BufferedOutputStream bOut = new BufferedOutputStream(fOut); ZipOutputStream tOut = new ZipOutputStream(bOut)) {
             addFileToZip(tOut, directory, "");
         }
     }
@@ -74,21 +74,26 @@ public class ZipUtils {
      *
      * @throws IOException If anything goes wrong
      */
-    private static void addFileToZip (ZipArchiveOutputStream zOut, File f, String base) throws IOException {
+    private static void addFileToZip (ZipOutputStream zOut, File f, String base) throws IOException {
 
-        final String entryName = base + f.getName();
-        final ZipArchiveEntry zipEntry = new ZipArchiveEntry(f, entryName);
+        String entryName = base + f.getName();
+        entryName = f.isDirectory() && !entryName.endsWith("/") ? entryName + "/" : entryName;
+        final ZipEntry zipEntry = new ZipEntry(entryName);
+           if (f.isFile()){
+               zipEntry.setSize(f.length());
+           }
+           zipEntry.setTime(f.lastModified());
 
-        zOut.putArchiveEntry(zipEntry);
+        zOut.putNextEntry(zipEntry);
 
         if (f.isFile()) {
             try (FileInputStream fInputStream = new FileInputStream(f)) {
                 IOUtils.copy(fInputStream, zOut);
-                zOut.closeArchiveEntry();
+                zOut.closeEntry();
             }
         }
         else {
-            zOut.closeArchiveEntry();
+            zOut.closeEntry();
             final File[] children = f.listFiles();
 
             if (children != null) {
@@ -100,19 +105,19 @@ public class ZipUtils {
     }
 
     /**
-     * Extract zip file at the specified destination path. NB:archive must consist of a single
+     * Extract zip file at the specified destination path. NB: must consist of a single
      * root folder containing everything else
      *
-     * @param archivePath path to zip file
+     * @param Path path to zip file
      * @param destinationPath path to extract zip file to. Created if it doesn't exist.
      */
-    public static void extractZip (String archivePath, String destinationPath) {
+    public static void extractZip (String Path, String destinationPath) {
 
-        final File archiveFile = new File(archivePath);
+        final File File = new File(Path);
         File unzipDestFolder;
         try {
             unzipDestFolder = new File(destinationPath);
-            unzipFolder(archiveFile, unzipDestFolder);
+            unzipFolder(File, unzipDestFolder);
         }
         catch (final Exception e) {
             e.printStackTrace();
@@ -130,17 +135,17 @@ public class ZipUtils {
     /**
      * Unzips a zip file into the given destination directory.
      *
-     * The archive file MUST have a unique "root" folder. This root folder is skipped when
+     * The  file MUST have a unique "root" folder. This root folder is skipped when
      * unarchiving.
      *
      */
-    public static void unzipFolder (File archiveFile, File zipDestinationFolder) {
+    public static void unzipFolder (File File, File zipDestinationFolder) {
 
-        try (MyZipFile zipFile = new MyZipFile(archiveFile)) {
+        try (MyZipFile zipFile = new MyZipFile(File)) {
 
-            final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                final ZipArchiveEntry zipEntry = entries.nextElement();
+                final ZipEntry zipEntry = entries.nextElement();
 
                 String name = zipEntry.getName();
                 if (zipEntry.isDirectory()) {
