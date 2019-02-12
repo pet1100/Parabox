@@ -46,6 +46,7 @@ minecraft {
     replace '@VERSION@', project.version
     replace '@FINGERPRINT@', project.findProperty('signSHA1')
     replaceIn "${mod_class}.java"
+	makeObfSourceJar = false
 }
 
 processResources {

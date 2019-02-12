@@ -48,7 +48,7 @@ public class Parabox {
     @Instance(MODID)
     public static Parabox instance;
     
-    @SidedProxy(clientSide = "net.darkhax.parabox.proxy.ClientProxy", serverSide = "net.darkhax.parbox.proxy.Proxy")
+    @SidedProxy(clientSide = "net.darkhax.parabox.proxy.ClientProxy", serverSide = "net.darkhax.parabox.proxy.Proxy")
     public static Proxy proxy;
 
     @EventHandler
