@@ -177,6 +177,7 @@ public class WorldSpaceTimeManager {
 
     public static void saveCustomWorldData () {
 
+    	if(currentWorldData != null && currentSaveRootDirectory != null)
         currentWorldData.save(currentSaveRootDirectory);
     }
 
