@@ -7,9 +7,7 @@ import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -21,96 +19,84 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockParabox extends BlockTileEntity {
 
-    public BlockParabox () {
+	public BlockParabox() {
 
-        super(Material.ROCK);
-        this.setResistance(6000000.0F);
-        this.setHardness(50.0F);
-        this.setResistance(2000.0F);
-        this.setSoundType(SoundType.STONE);
-    }
+		super(Material.ROCK);
+		this.setResistance(6000000.0F);
+		this.setHardness(50.0F);
+		this.setResistance(2000.0F);
+		this.setSoundType(SoundType.STONE);
+	}
 
-    @Override
-    public TileEntity createNewTileEntity (World worldIn, int meta) {
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
 
-        return new TileEntityParabox();
-    }
+		return new TileEntityParabox();
+	}
 
-    @Override
-    public void onBlockPlacedBy (World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        final TileEntityParabox parabox = getParabox(world, pos);
+		if (!worldIn.isRemote && !WorldSpaceTimeManager.isSaving()) {
 
-        if (parabox != null) {
+			final TileEntityParabox box = getParabox(worldIn, pos);
 
-            parabox.ownerId = placer.getUniqueID();
-            parabox.ownerName = placer.getName();
-        }
-    }
+			if (box != null && WorldSpaceTimeManager.getWorldData().getUserData(playerIn.getUniqueID()) == null) {
 
-    @Override
-    public boolean onBlockActivated (World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+				final ParaboxUserData data = new ParaboxUserData();
+				data.setPosition(pos);
+				data.setHasConfirmed(false);
+				WorldSpaceTimeManager.getWorldData().addUser(playerIn.getUniqueID(), data);
+				WorldSpaceTimeManager.saveCustomWorldData();
+			}
+		}
 
-        if (!worldIn.isRemote && !WorldSpaceTimeManager.isSaving()) {
+		else {
 
-            final TileEntityParabox box = getParabox(worldIn, pos);
+			playerIn.openGui(Parabox.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		}
 
-            if (box != null && box.isOwner(playerIn) && WorldSpaceTimeManager.getWorldData().getUserData(playerIn.getUniqueID()) == null) {
+		return true;
+	}
 
-                final ParaboxUserData data = new ParaboxUserData();
-                data.setPosition(pos);
-                data.setHasConfirmed(false);
-                WorldSpaceTimeManager.getWorldData().addUser(playerIn.getUniqueID(), data);
-                WorldSpaceTimeManager.saveCustomWorldData();
-            }
-        }
+	@Override
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 
-        else {
+		final TileEntityParabox box = getParabox(world, pos);
 
-            playerIn.openGui(Parabox.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        }
+		if (box != null) {
 
-        return true;
-    }
+			box.setActive(false);
+			WorldSpaceTimeManager.getWorldData().getUserData().clear();
+			return super.removedByPlayer(state, world, pos, player, willHarvest);
+		}
 
-    @Override
-    public boolean removedByPlayer (IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+		return false;
+	}
 
-        final TileEntityParabox box = getParabox(world, pos);
+	@Override
+	public boolean isFullCube(IBlockState state) {
 
-        if (box != null && box.isOwner(player)) {
+		return false;
+	}
 
-            box.setActive(false);
-            WorldSpaceTimeManager.getWorldData().removeUser(player.getUniqueID());
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
-        }
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
-    public boolean isFullCube (IBlockState state) {
+	public static TileEntityParabox getParabox(World world, BlockPos pos) {
 
-        return false;
-    }
+		final TileEntity tile = world.getTileEntity(pos);
 
-    @Override
-    public boolean isOpaqueCube (IBlockState state) {
+		return tile instanceof TileEntityParabox ? (TileEntityParabox) tile : null;
+	}
 
-        return false;
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	public BlockRenderLayer getRenderLayer() {
 
-    public static TileEntityParabox getParabox (World world, BlockPos pos) {
-
-        final TileEntity tile = world.getTileEntity(pos);
-
-        return tile instanceof TileEntityParabox ? (TileEntityParabox) tile : null;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getRenderLayer () {
-
-        return BlockRenderLayer.TRANSLUCENT;
-    }
+		return BlockRenderLayer.TRANSLUCENT;
+	}
 }

@@ -7,14 +7,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketRefreshGui extends SerializableMessage<PacketRefreshGui> {
 
-    public PacketRefreshGui () {
+	public PacketRefreshGui() {
 
-    }
+	}
 
-    @Override
-    public IMessage handleMessage (MessageContext context) {
+	@Override
+	public IMessage handleMessage(MessageContext context) {
 
-        Minecraft.getMinecraft().currentScreen.initGui();
-        return null;
-    }
+		Minecraft.getMinecraft().currentScreen.initGui();
+		return null;
+	}
 }

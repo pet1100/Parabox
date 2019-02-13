@@ -15,96 +15,96 @@ import com.google.gson.annotations.Expose;
 
 public class ParaboxWorldData {
 
-    private static final Gson GSON = new Gson();
+	private static final Gson GSON = new Gson();
 
-    @Expose
-    private final UUID worldId;
+	@Expose
+	private final UUID worldId;
 
-    @Expose
-    private boolean shouldDelete = false;
+	@Expose
+	private boolean shouldDelete = false;
 
-    @Expose
-    private final Map<UUID, ParaboxUserData> confirmations = new HashMap<>();
+	@Expose
+	private final Map<UUID, ParaboxUserData> confirmations = new HashMap<>();
 
-    public boolean isShouldDelete () {
+	public boolean isShouldDelete() {
 
-        return this.shouldDelete;
-    }
+		return this.shouldDelete;
+	}
 
-    public void setShouldDelete (boolean shouldDelete) {
+	public void setShouldDelete(boolean shouldDelete) {
 
-        this.shouldDelete = shouldDelete;
-    }
+		this.shouldDelete = shouldDelete;
+	}
 
-    public ParaboxUserData getUserData (UUID userId) {
+	public ParaboxUserData getUserData(UUID userId) {
 
-        return this.confirmations.get(userId);
-    }
+		return this.confirmations.get(userId);
+	}
 
-    public void addUser (UUID userId, ParaboxUserData data) {
+	public void addUser(UUID userId, ParaboxUserData data) {
 
-        this.confirmations.put(userId, data);
-    }
+		this.confirmations.put(userId, data);
+	}
 
-    public void removeUser (UUID userId) {
+	public void removeUser(UUID userId) {
 
-        this.confirmations.remove(userId);
-    }
+		this.confirmations.remove(userId);
+	}
 
-    public Set<Entry<UUID, ParaboxUserData>> getUserData () {
+	public Set<Entry<UUID, ParaboxUserData>> getUserData() {
 
-        return this.confirmations.entrySet();
-    }
+		return this.confirmations.entrySet();
+	}
 
-    private ParaboxWorldData (UUID id) {
+	private ParaboxWorldData(UUID id) {
 
-        this.worldId = id;
-    }
+		this.worldId = id;
+	}
 
-    public UUID getWorldId () {
+	public UUID getWorldId() {
 
-        return this.worldId;
-    }
+		return this.worldId;
+	}
 
-    public File getBackupFile () {
+	public File getBackupFile() {
 
-        return new File(WorldHelper.getBackupDir(), this.getWorldId().toString().toLowerCase() + ".zip");
-    }
+		return new File(WorldHelper.getBackupDir(), this.getWorldId().toString().toLowerCase() + ".zip");
+	}
 
-    public void save (File worldFile) {
+	public void save(File worldFile) {
 
-        final File dataFile = new File(worldFile, "parabox.json");
+		final File dataFile = new File(worldFile, "parabox.json");
 
-        try (FileWriter writer = new FileWriter(dataFile)) {
+		try (FileWriter writer = new FileWriter(dataFile)) {
 
-            GSON.toJson(this, writer);
-        }
+			GSON.toJson(this, writer);
+		}
 
-        catch (final IOException e) {
+		catch (final IOException e) {
 
-            e.printStackTrace();
-        }
-    }
+			e.printStackTrace();
+		}
+	}
 
-    public static ParaboxWorldData getData (File worldFile) {
+	public static ParaboxWorldData getData(File worldFile) {
 
-        final File dataFile = new File(worldFile, "parabox.json");
+		final File dataFile = new File(worldFile, "parabox.json");
 
-        if (!dataFile.exists()) {
+		if (!dataFile.exists()) {
 
-            new ParaboxWorldData(UUID.randomUUID()).save(worldFile);
-        }
+			new ParaboxWorldData(UUID.randomUUID()).save(worldFile);
+		}
 
-        try (FileReader reader = new FileReader(dataFile)) {
+		try (FileReader reader = new FileReader(dataFile)) {
 
-            return GSON.fromJson(reader, ParaboxWorldData.class);
-        }
+			return GSON.fromJson(reader, ParaboxWorldData.class);
+		}
 
-        catch (final IOException e) {
+		catch (final IOException e) {
 
-            e.printStackTrace();
-        }
+			e.printStackTrace();
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

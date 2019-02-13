@@ -13,59 +13,58 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class WorldHelper {
 
-    private static final File BACKUP = new File("backup");
+	private static final File BACKUP = new File("backup");
 
-    public static File getBackupDir () {
+	public static File getBackupDir() {
 
-        if (!BACKUP.exists()) {
+		if (!BACKUP.exists()) {
 
-            BACKUP.mkdirs();
-        }
+			BACKUP.mkdirs();
+		}
 
-        return BACKUP;
-    }
+		return BACKUP;
+	}
 
-    public static void disconnectAll () {
+	public static void disconnectAll() {
 
-        final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-        if (server != null) {
+		if (server != null) {
 
-            final EntityPlayerMP[] players = server.getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]);
+			final EntityPlayerMP[] players = server.getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]);
 
-            for (final EntityPlayerMP player : players) {
+			for (final EntityPlayerMP player : players) {
 
-                player.connection.disconnect(new TextComponentTranslation("info.parabox.disconnect"));
-            }
-        }
-    }
+				player.connection.disconnect(new TextComponentTranslation("info.parabox.disconnect"));
+			}
+		}
+	}
 
-    public static void saveWorld () {
+	public static void saveWorld() {
 
-        final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-        Parabox.LOG.info("Saving player data for world.");
+		Parabox.LOG.info("Saving player data for world.");
 
-        if (server.getPlayerList() != null) {
+		if (server.getPlayerList() != null) {
 
-            server.getPlayerList().saveAllPlayerData();
-        }
+			server.getPlayerList().saveAllPlayerData();
+		}
 
-        for (final WorldServer world : server.worlds) {
+		for (final WorldServer world : server.worlds) {
 
-            try {
-                Parabox.LOG.info("Saving data for world: " + WorldUtils.getWorldName(world));
-                world.saveAllChunks(true, null);
-            }
-            catch (final MinecraftException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
+			try {
+				Parabox.LOG.info("Saving data for world: " + WorldUtils.getWorldName(world));
+				world.saveAllChunks(true, null);
+			} catch (final MinecraftException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
-    public static void shutdown () {
+	public static void shutdown() {
 
-        FMLCommonHandler.instance().getMinecraftServerInstance().initiateShutdown();
-    }
+		FMLCommonHandler.instance().getMinecraftServerInstance().initiateShutdown();
+	}
 }

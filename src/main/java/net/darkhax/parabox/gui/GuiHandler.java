@@ -8,22 +8,21 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
-    public static final int PARABOX_CONSOLE = 0;
+	public static final int PARABOX_CONSOLE = 0;
 
-    @Override
-    public Object getServerGuiElement (int id, EntityPlayer player, World world, int x, int y, int z) {
+	@Override
+	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public Object getClientGuiElement (int id, EntityPlayer player, World world, int x, int y, int z) {
+	@Override
+	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        if (id == PARABOX_CONSOLE) {
+		if (id == PARABOX_CONSOLE) {
 
-            return new GuiParabox(BlockParabox.getParabox(world, new BlockPos(x, y, z)), player);
-        }
+		return new GuiParabox(BlockParabox.getParabox(world, new BlockPos(x, y, z)), player); }
 
-        return null;
-    }
+		return null;
+	}
 }

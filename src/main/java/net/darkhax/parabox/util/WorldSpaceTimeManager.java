@@ -26,217 +26,212 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 @EventBusSubscriber
 public class WorldSpaceTimeManager {
 
-    private static File currentSaveRootDirectory;
-    private static ParaboxWorldData currentWorldData;
-    private static boolean[] oldSaveStates;
-    private static boolean isSaving = false;
-    private static boolean requireSaving = false;
+	private static File currentSaveRootDirectory;
+	private static ParaboxWorldData currentWorldData;
+	private static boolean[] oldSaveStates;
+	private static boolean isSaving = false;
+	private static boolean requireSaving = false;
 
-    public static boolean isSaving () {
+	public static boolean isSaving() {
 
-        return isSaving;
-    }
+		return isSaving;
+	}
 
-    public static boolean requireSaving () {
+	public static boolean requireSaving() {
 
-        return requireSaving;
-    }
+		return requireSaving;
+	}
 
-    public static ParaboxWorldData getWorldData () {
+	public static ParaboxWorldData getWorldData() {
 
-        return currentWorldData;
-    }
+		return currentWorldData;
+	}
 
-    public static void onGameInstanceStart () {
+	public static void onGameInstanceStart() {
 
-        Parabox.LOG.info("Initializing Parabox world data.");
-        currentSaveRootDirectory = DimensionManager.getCurrentSaveRootDirectory();
-        currentWorldData = ParaboxWorldData.getData(currentSaveRootDirectory);
-    }
+		Parabox.LOG.info("Initializing Parabox world data.");
+		currentSaveRootDirectory = DimensionManager.getCurrentSaveRootDirectory();
+		currentWorldData = ParaboxWorldData.getData(currentSaveRootDirectory);
+	}
 
-    public static void onGameInstanceClose () {
+	public static void onGameInstanceClose() {
 
-        Parabox.LOG.info("Saving Parabox world data.");
-        currentWorldData.save(currentSaveRootDirectory);
+		Parabox.LOG.info("Saving Parabox world data.");
+		currentWorldData.save(currentSaveRootDirectory);
 
-        if (currentWorldData.isShouldDelete()) {
+		if (currentWorldData.isShouldDelete()) {
 
-            Parabox.LOG.info("World has been marked for deletion. Starting world loop process.");
+			Parabox.LOG.info("World has been marked for deletion. Starting world loop process.");
 
-            try {
+			try {
 
-                Parabox.LOG.info("Deleting the current world file.");
-                BlacklistedFileUtils.delete(currentSaveRootDirectory);
-                Parabox.LOG.info("Restoring the initial world backup.");
-                BlacklistedFileUtils.unzipFolder(currentWorldData.getBackupFile(), currentSaveRootDirectory.getParentFile());
-                currentWorldData.getBackupFile().delete();
+				Parabox.LOG.info("Deleting the current world file.");
+				BlacklistedFileUtils.delete(currentSaveRootDirectory);
+				Parabox.LOG.info("Restoring the initial world backup.");
+				BlacklistedFileUtils.unzipFolder(currentWorldData.getBackupFile(), currentSaveRootDirectory.getParentFile());
+				currentWorldData.getBackupFile().delete();
 
-                for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
+				for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
 
-                    final PlayerData prestigeData = GlobalPrestigeData.getPlayerData(entry.getKey());
-                    prestigeData.addPrestige(entry.getValue().getPoints());
-                    GlobalPrestigeData.save(prestigeData);
-                }
-            }
+					final PlayerData prestigeData = GlobalPrestigeData.getPlayerData(entry.getKey());
+					prestigeData.addPrestige(entry.getValue().getPoints());
+					GlobalPrestigeData.save(prestigeData);
+				}
+			}
 
-            catch (final IOException e) {
+			catch (final IOException e) {
 
-                Parabox.LOG.catching(e);
-            }
+				Parabox.LOG.catching(e);
+			}
 
-        }
+		}
 
-        currentSaveRootDirectory = null;
-        currentWorldData = null;
-    }
+		currentSaveRootDirectory = null;
+		currentWorldData = null;
+	}
 
-    public static void initiateWorldBackup () {
+	public static void initiateWorldBackup() {
 
-        if (!currentWorldData.getBackupFile().exists() && !isSaving) {
+		if (!currentWorldData.getBackupFile().exists() && !isSaving) {
 
-            requireSaving = true;
-        }
-    }
+			requireSaving = true;
+		}
+	}
 
-    public static void triggerCollapse (WorldServer server) {
+	public static void triggerCollapse(WorldServer server) {
 
-        for (final EntityPlayerMP player : server.getMinecraftServer().getPlayerList().getPlayers()) {
+		for (final EntityPlayerMP player : server.getMinecraftServer().getPlayerList().getPlayers()) {
 
-            player.connection.disconnect(new TextComponentString("The world is collapsing!"));
-            Parabox.proxy.onGameShutdown();
-        }
+			player.connection.disconnect(new TextComponentString("The world is collapsing!"));
+			Parabox.proxy.onGameShutdown();
+		}
 
-        if (!currentWorldData.getBackupFile().exists()) {
+		if (!currentWorldData.getBackupFile().exists()) {
 
-            Parabox.LOG.warn("Attempted to do a world reset, but no world backup found. This mod will not work as intended if the backup file {} is not restored.", currentWorldData.getBackupFile().getPath());
-            return;
-        }
+			Parabox.LOG.warn("Attempted to do a world reset, but no world backup found. This mod will not work as intended if the backup file {} is not restored.", currentWorldData.getBackupFile().getPath());
+			return;
+		}
 
-        // Prevent collapse if not everyone has agreed.
-        for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
+		// Prevent collapse if not everyone has agreed.
+		for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
 
-            if (!entry.getValue().isHasConfirmed()) {
+			if (!entry.getValue().isHasConfirmed()) {
 
-                return;
-            }
-        }
+			return; }
+		}
 
-        currentWorldData.setShouldDelete(true);
-        WorldHelper.shutdown();
-    }
+		currentWorldData.setShouldDelete(true);
+		WorldHelper.shutdown();
+	}
 
-    private static void disableSaving () {
+	private static void disableSaving() {
 
-        final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        Parabox.LOG.info("Temporarily disabling world saving.");
+		final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		Parabox.LOG.info("Temporarily disabling world saving.");
 
-        server.getPlayerList().saveAllPlayerData();
+		server.getPlayerList().saveAllPlayerData();
 
-        oldSaveStates = new boolean[server.worlds.length];
+		oldSaveStates = new boolean[server.worlds.length];
 
-        for (int i = 0; i < oldSaveStates.length; i++) {
-            final WorldServer worldServer = server.worlds[i];
-            if (worldServer == null) {
-                continue;
-            }
+		for (int i = 0; i < oldSaveStates.length; i++) {
+			final WorldServer worldServer = server.worlds[i];
+			if (worldServer == null) {
+				continue;
+			}
 
-            oldSaveStates[i] = worldServer.disableLevelSaving;
+			oldSaveStates[i] = worldServer.disableLevelSaving;
 
-            try {
-                worldServer.saveAllChunks(true, null);
-                worldServer.flush();
-            }
-            catch (final MinecraftException ex) {
-                Parabox.LOG.warn("Failed to save world.");
-                Parabox.LOG.catching(ex);
-            }
+			try {
+				worldServer.saveAllChunks(true, null);
+				worldServer.flush();
+			} catch (final MinecraftException ex) {
+				Parabox.LOG.warn("Failed to save world.");
+				Parabox.LOG.catching(ex);
+			}
 
-            worldServer.disableLevelSaving = true;
-        }
-    }
+			worldServer.disableLevelSaving = true;
+		}
+	}
 
-    private static void restoreSaving () {
+	private static void restoreSaving() {
 
-        final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        final int l = Math.min(oldSaveStates.length, server.worlds.length);
-        Parabox.LOG.info("Restoring world saving states.");
+		final MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+		final int l = Math.min(oldSaveStates.length, server.worlds.length);
+		Parabox.LOG.info("Restoring world saving states.");
 
-        for (int i = 0; i < l; i++) {
-            final WorldServer worldServer = server.worlds[i];
+		for (int i = 0; i < l; i++) {
+			final WorldServer worldServer = server.worlds[i];
 
-            if (worldServer != null) {
-                worldServer.disableLevelSaving = oldSaveStates[i];
-            }
-        }
+			if (worldServer != null) {
+				worldServer.disableLevelSaving = oldSaveStates[i];
+			}
+		}
 
-        if (server.getPlayerList() != null) {
+		if (server.getPlayerList() != null) {
 
-            server.getPlayerList().sendMessage(new TextComponentTranslation("parabox.status.backup"));
-        }
-    }
+			server.getPlayerList().sendMessage(new TextComponentTranslation("parabox.status.backup"));
+		}
+	}
 
-    public static void saveCustomWorldData () {
+	public static void saveCustomWorldData() {
 
-    	if(currentWorldData != null && currentSaveRootDirectory != null)
-        currentWorldData.save(currentSaveRootDirectory);
-    }
+		if (currentWorldData != null && currentSaveRootDirectory != null) currentWorldData.save(currentSaveRootDirectory);
+	}
 
-    @SubscribeEvent
-    public static void serverTick (TickEvent.ServerTickEvent event) {
+	@SubscribeEvent
+	public static void serverTick(TickEvent.ServerTickEvent event) {
 
-        if (event.phase == Phase.END) {
-            
-            return;
-        }
-        
-        if (requireSaving && !isSaving) {
+		if (event.phase == Phase.END) {
 
-            try {
+		return; }
 
-                disableSaving();
-                isSaving = true;
-                requireSaving = false;
-                WorldHelper.saveWorld();
+		if (requireSaving && !isSaving) {
 
-                Parabox.LOG.info("Creating snapshot of world at " + currentWorldData.getBackupFile().getName());
-                ZipUtils.createZip(currentSaveRootDirectory, currentWorldData.getBackupFile());
-                Parabox.LOG.info("Snapshot created succesffully.");
-                currentWorldData.save(currentSaveRootDirectory);
-            }
-            catch (final IOException e) {
+			try {
 
-            }
-        }
+				disableSaving();
+				isSaving = true;
+				requireSaving = false;
+				WorldHelper.saveWorld();
 
-        else if (!requireSaving && isSaving) {
+				Parabox.LOG.info("Creating snapshot of world at " + currentWorldData.getBackupFile().getName());
+				ZipUtils.createZip(currentSaveRootDirectory, currentWorldData.getBackupFile());
+				Parabox.LOG.info("Snapshot created succesffully.");
+				currentWorldData.save(currentSaveRootDirectory);
+			} catch (final IOException e) {
 
-            restoreSaving();
-            isSaving = false;
-        }
-    }
-    
-    public static void handleFailState() {
-        
-        boolean noActiveUsers = true;
+			}
+		}
 
-        for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
+		else if (!requireSaving && isSaving) {
 
-            if (entry.getValue().isActive()) {
+			restoreSaving();
+			isSaving = false;
+		}
+	}
 
-                noActiveUsers = false;
-                break;
-            }
-        }
+	public static void handleFailState() {
 
-        if (noActiveUsers && currentWorldData.getBackupFile().exists()) {
+		boolean noActiveUsers = true;
 
-            currentWorldData.getBackupFile().delete();
+		for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
 
-            final PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
-            if (playerList != null) {
+			if (entry.getValue().isActive()) {
 
-                playerList.sendMessage(new TextComponentTranslation("parabox.status.backup.reset"));
-            }
-        }
-    }
+				noActiveUsers = false;
+				break;
+			}
+		}
+
+		if (noActiveUsers && currentWorldData.getBackupFile().exists()) {
+
+			currentWorldData.getBackupFile().delete();
+
+			final PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
+			if (playerList != null) {
+
+				playerList.sendMessage(new TextComponentTranslation("parabox.status.backup.reset"));
+			}
+		}
+	}
 }

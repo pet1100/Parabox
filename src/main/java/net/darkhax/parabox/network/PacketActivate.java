@@ -10,38 +10,38 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketActivate extends TileEntityMessage<TileEntityParabox> {
 
-    public PacketActivate () {
+	public PacketActivate() {
 
-    }
+	}
 
-    public PacketActivate (BlockPos pos) {
+	public PacketActivate(BlockPos pos) {
 
-        super(pos);
-    }
+		super(pos);
+	}
 
-    @Override
-    public final IMessage handleMessage (MessageContext context) {
+	@Override
+	public final IMessage handleMessage(MessageContext context) {
 
-        super.handleMessage(context);
-        return new PacketRefreshGui();
-    }
+		super.handleMessage(context);
+		return new PacketRefreshGui();
+	}
 
-    @Override
-    public void getAction () {
+	@Override
+	public void getAction() {
 
-        if (this.tile.isOwner(this.context.getServerHandler().player)) {
+		if (this.tile.isOwner(this.context.getServerHandler().player)) {
 
-            this.tile.setActive(!this.tile.isActive());
-            this.tile.setConfirmation(false);
-            this.tile.sync();
+			this.tile.setActive(!this.tile.isActive());
+			this.tile.setConfirmation(false);
+			this.tile.sync();
 
-            final ParaboxUserData userData = WorldSpaceTimeManager.getWorldData().getUserData(this.tile.getOwnerId());
+			final ParaboxUserData userData = WorldSpaceTimeManager.getWorldData().getUserData(this.tile.getOwnerId());
 
-            if (userData != null) {
+			if (userData != null) {
 
-                userData.setHasConfirmed(this.tile.hasConfirmed());
-                WorldSpaceTimeManager.saveCustomWorldData();
-            }
-        }
-    }
+				userData.setHasConfirmed(this.tile.hasConfirmed());
+				WorldSpaceTimeManager.saveCustomWorldData();
+			}
+		}
+	}
 }

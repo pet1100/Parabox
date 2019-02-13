@@ -6,55 +6,55 @@ import net.minecraft.util.math.BlockPos;
 
 public class ParaboxUserData {
 
-    @Expose
-    private boolean hasConfirmed;
+	@Expose
+	private boolean hasConfirmed;
 
-    @Expose
-    private boolean isActive;
+	@Expose
+	private boolean isActive;
 
-    @Expose
-    private BlockPos position;
+	@Expose
+	private BlockPos position;
 
-    @Expose
-    private int points;
+	@Expose
+	private int points;
 
-    public int getPoints () {
+	public int getPoints() {
 
-        return this.points;
-    }
+		return this.points;
+	}
 
-    public void setPoints (int points) {
+	public void setPoints(int points) {
 
-        this.points = points;
-    }
+		this.points = points;
+	}
 
-    public boolean isHasConfirmed () {
+	public boolean isHasConfirmed() {
 
-        return this.hasConfirmed;
-    }
+		return this.hasConfirmed;
+	}
 
-    public void setHasConfirmed (boolean hasConfirmed) {
+	public void setHasConfirmed(boolean hasConfirmed) {
 
-        this.hasConfirmed = hasConfirmed;
-    }
+		this.hasConfirmed = hasConfirmed;
+	}
 
-    public BlockPos getPosition () {
+	public BlockPos getPosition() {
 
-        return this.position;
-    }
+		return this.position;
+	}
 
-    public void setPosition (BlockPos position) {
+	public void setPosition(BlockPos position) {
 
-        this.position = position;
-    }
+		this.position = position;
+	}
 
-    public boolean isActive () {
+	public boolean isActive() {
 
-        return this.isActive;
-    }
+		return this.isActive;
+	}
 
-    public void setActive (boolean isActive) {
+	public void setActive(boolean isActive) {
 
-        this.isActive = isActive;
-    }
+		this.isActive = isActive;
+	}
 }

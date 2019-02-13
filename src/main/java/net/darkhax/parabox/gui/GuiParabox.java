@@ -20,132 +20,122 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiParabox extends GuiScreen {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Parabox.MODID, "textures/gui/parabox-background.png");
-    private static final int xSize = 176;
-    private static final int ySize = 115;
-    private static final String[] SPINNER = { "|", "/", "-", "\\" };
-    private final TileEntityParabox tile;
-    private final EntityPlayer user;
+	private static final ResourceLocation TEXTURE = new ResourceLocation(Parabox.MODID, "textures/gui/parabox-background.png");
+	private static final int xSize = 176;
+	private static final int ySize = 115;
+	private static final String[] SPINNER = { "|", "/", "-", "\\" };
+	private final TileEntityParabox tile;
+	private final EntityPlayer user;
 
-    private int loadTime;
-    private int startX;
-    private int startY;
+	private int loadTime;
+	private int startX;
+	private int startY;
 
-    private boolean active;
-    private boolean confirmed;
+	private boolean active;
 
-    private GuiButton statusButton;
-    private GuiButton confirmationButton;
+	private GuiButton statusButton;
+	private GuiButton confirmationButton;
 
-    public GuiParabox (TileEntityParabox tile, EntityPlayer user) {
+	public GuiParabox(TileEntityParabox tile, EntityPlayer user) {
 
-        this.tile = tile;
-        this.user = user;
+		this.tile = tile;
+		this.user = user;
 
-        this.active = tile.isActive();
-        this.confirmed = tile.hasConfirmed();
-    }
+		this.active = tile.isActive();
+	}
 
-    @Override
-    public void initGui () {
+	@Override
+	public void initGui() {
 
-        this.startX = (this.width - xSize) / 2;
-        this.startY = (this.height - ySize) / 2;
+		this.startX = (this.width - xSize) / 2;
+		this.startY = (this.height - ySize) / 2;
 
-        this.buttonList.clear();
-        this.loadTime = MathsUtils.nextIntInclusive(1, 4);
-        this.statusButton = new GuiButton(0, this.startX + 14, this.startY + 89, 60, 20, I18n.format("parabox.button." + (this.active ? "deactivate" : "activate")));
-        this.confirmationButton = new GuiButton(1, this.startX + xSize - 74, this.startY + 89, 60, 20, I18n.format("parabox.button.loop." + (this.confirmed ? "on" : "off")));
-        this.buttonList.add(this.statusButton);
-        this.buttonList.add(this.confirmationButton);
+		this.buttonList.clear();
+		this.loadTime = MathsUtils.nextIntInclusive(1, 4);
+		this.statusButton = new GuiButton(0, this.startX + 14, this.startY + 89, 60, 20, I18n.format("parabox.button." + (this.active ? "deactivate" : "activate")));
+		this.confirmationButton = new GuiButton(1, this.startX + xSize - 74, this.startY + 89, 60, 20, I18n.format("parabox.button.loop." + (this.confirmed ? "on" : "off")));
+		this.buttonList.add(this.statusButton);
+		this.buttonList.add(this.confirmationButton);
 
-        if (!this.tile.isOwner(this.user)) {
+		if (!this.active) {
 
-            this.statusButton.enabled = false;
-            this.confirmationButton.enabled = false;
-            this.confirmationButton.visible = false;
-        }
+			this.confirmationButton.enabled = false;
+			this.confirmationButton.visible = false;
+		}
+	}
 
-        if (!this.active) {
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException {
 
-            this.confirmationButton.enabled = false;
-            this.confirmationButton.visible = false;
-        }
-    }
+		if (button == this.statusButton) {
 
-    @Override
-    protected void actionPerformed (GuiButton button) throws IOException {
+			Parabox.NETWORK.sendToServer(new PacketActivate(this.tile.getPos()));
+			this.active = !this.active;
+		}
 
-        if (button == this.statusButton) {
+		else if (button == this.confirmationButton) {
 
-            Parabox.NETWORK.sendToServer(new PacketActivate(this.tile.getPos()));
-            this.active = !this.active;
-            this.confirmed = false;
-        }
+			Parabox.NETWORK.sendToServer(new PacketConfirmReset(this.tile.getPos()));
+			this.confirmed = !this.confirmed;
+		}
+	}
 
-        else if (button == this.confirmationButton) {
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
-            Parabox.NETWORK.sendToServer(new PacketConfirmReset(this.tile.getPos()));
-            this.confirmed = !this.confirmed;
-        }
-    }
+		this.drawDefaultBackground();
+		this.drawBackgroundImage();
 
-    @Override
-    public void drawScreen (int mouseX, int mouseY, float partialTicks) {
+		final int worldTicks = this.mc.player.ticksExisted;
 
-        this.drawDefaultBackground();
-        this.drawBackgroundImage();
+		// Handle loading screen text
+		if (this.loadTime > 0) {
 
-        final int worldTicks = this.mc.player.ticksExisted;
+			this.drawString(this.fontRenderer, SPINNER[worldTicks % 12 / 3], this.startX + 10, this.startY + 12, 16777215);
 
-        // Handle loading screen text
-        if (this.loadTime > 0) {
+			if (worldTicks % 20 == 0) {
 
-            this.drawString(this.fontRenderer, SPINNER[worldTicks % 12 / 3], this.startX + 10, this.startY + 12, 16777215);
+				this.loadTime--;
+			}
+		}
 
-            if (worldTicks % 20 == 0) {
+		else {
 
-                this.loadTime--;
-            }
-        }
+			int lineNum = 0;
 
-        else {
+			for (final String line : this.tile.getInfo(new ArrayList<>(), this.user)) {
 
-            int lineNum = 0;
+				final int offset = this.fontRenderer.FONT_HEIGHT * lineNum + 2 * lineNum;
+				this.drawString(this.fontRenderer, line, this.startX + 10, this.startY + 12 + offset, 16777215);
+				lineNum++;
+			}
+		}
 
-            for (final String line : this.tile.getInfo(new ArrayList<>(), this.user)) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
 
-                final int offset = this.fontRenderer.FONT_HEIGHT * lineNum + 2 * lineNum;
-                this.drawString(this.fontRenderer, line, this.startX + 10, this.startY + 12 + offset, 16777215);
-                lineNum++;
-            }
-        }
+		if (this.statusButton.isMouseOver() && this.statusButton.enabled) {
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+			this.drawHoveringText(I18n.format("parabox.tip." + (this.active ? "deactivate" : "activate")), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
+		}
 
-        if (this.statusButton.isMouseOver() && this.statusButton.enabled) {
+		else if (this.confirmationButton.isMouseOver() && this.confirmationButton.enabled) {
 
-            this.drawHoveringText(I18n.format("parabox.tip." + (this.active ? "deactivate" : "activate")), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
-        }
+			this.drawHoveringText(I18n.format("parabox.tip.loop." + (!this.confirmed ? "off" : "on")), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
+		}
+	}
 
-        else if (this.confirmationButton.isMouseOver() && this.confirmationButton.enabled) {
+	@Override
+	public boolean doesGuiPauseGame() {
 
-            this.drawHoveringText(I18n.format("parabox.tip.loop." + (!this.confirmed ? "off" : "on")), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
-        }
-    }
+		return false;
+	}
 
-    @Override
-    public boolean doesGuiPauseGame () {
+	private void drawBackgroundImage() {
 
-        return false;
-    }
-
-    private void drawBackgroundImage () {
-
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(TEXTURE);
-        final int i = (this.width - xSize) / 2;
-        final int j = (this.height - ySize) / 2;
-        this.drawTexturedModalRect(i, j, 0, 0, xSize, ySize);
-    }
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		this.mc.getTextureManager().bindTexture(TEXTURE);
+		final int i = (this.width - xSize) / 2;
+		final int j = (this.height - ySize) / 2;
+		this.drawTexturedModalRect(i, j, 0, 0, xSize, ySize);
+	}
 }
