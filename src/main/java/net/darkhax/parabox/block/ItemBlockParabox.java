@@ -37,6 +37,10 @@ public class ItemBlockParabox extends ItemBlock {
 			return false;
 		}
 
-		return super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
+		if (super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState)) {
+			WorldSpaceTimeManager.getWorldData().setParabox(pos);
+			return true;
+		}
+		return false;
 	}
 }

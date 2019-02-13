@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -53,7 +54,7 @@ public class GuiParabox extends GuiScreen {
 		this.buttonList.clear();
 		this.loadTime = MathsUtils.nextIntInclusive(1, 4);
 		this.statusButton = new GuiButton(0, this.startX + 14, this.startY + 89, 60, 20, I18n.format("parabox.button." + (this.active ? "deactivate" : "activate")));
-		this.confirmationButton = new GuiButton(1, this.startX + xSize - 74, this.startY + 89, 60, 20, I18n.format("parabox.button.loop." + (this.confirmed ? "on" : "off")));
+		this.confirmationButton = new GuiButton(1, this.startX + xSize - 74, this.startY + 89, 60, 20, I18n.format("parabox.button.loop.off"));
 		this.buttonList.add(this.statusButton);
 		this.buttonList.add(this.confirmationButton);
 
@@ -68,15 +69,13 @@ public class GuiParabox extends GuiScreen {
 	protected void actionPerformed(GuiButton button) throws IOException {
 
 		if (button == this.statusButton) {
-
 			Parabox.NETWORK.sendToServer(new PacketActivate(this.tile.getPos()));
-			this.active = !this.active;
+			//hack for singleplayer
+			if(!FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer()) this.active = !this.active;
 		}
 
 		else if (button == this.confirmationButton) {
-
 			Parabox.NETWORK.sendToServer(new PacketConfirmReset(this.tile.getPos()));
-			this.confirmed = !this.confirmed;
 		}
 	}
 
@@ -120,7 +119,7 @@ public class GuiParabox extends GuiScreen {
 
 		else if (this.confirmationButton.isMouseOver() && this.confirmationButton.enabled) {
 
-			this.drawHoveringText(I18n.format("parabox.tip.loop." + (!this.confirmed ? "off" : "on")), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
+			this.drawHoveringText(I18n.format("parabox.tip.loop.off"), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
 		}
 	}
 

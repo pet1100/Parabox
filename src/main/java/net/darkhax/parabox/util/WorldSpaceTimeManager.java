@@ -9,6 +9,8 @@ import com.jarhax.prestige.data.GlobalPrestigeData;
 import com.jarhax.prestige.data.PlayerData;
 
 import net.darkhax.parabox.Parabox;
+import net.darkhax.parabox.block.BlockParabox;
+import net.darkhax.parabox.block.TileEntityParabox;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
@@ -112,14 +114,6 @@ public class WorldSpaceTimeManager {
 			return;
 		}
 
-		// Prevent collapse if not everyone has agreed.
-		for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
-
-			if (!entry.getValue().isHasConfirmed()) {
-
-			return; }
-		}
-
 		currentWorldData.setShouldDelete(true);
 		WorldHelper.shutdown();
 	}
@@ -214,13 +208,10 @@ public class WorldSpaceTimeManager {
 
 		boolean noActiveUsers = true;
 
-		for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
+		TileEntityParabox box = BlockParabox.getParabox(Parabox.overworld(), currentWorldData.getParabox());
 
-			if (entry.getValue().isActive()) {
-
-				noActiveUsers = false;
-				break;
-			}
+		if (box != null && box.isActive()) {
+			noActiveUsers = false;
 		}
 
 		if (noActiveUsers && currentWorldData.getBackupFile().exists()) {

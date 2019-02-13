@@ -1,10 +1,13 @@
 package net.darkhax.parabox.block;
 
 import java.text.NumberFormat;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import net.darkhax.bookshelf.block.tileentity.TileEntityBasicTickable;
 import net.darkhax.parabox.Parabox;
@@ -13,11 +16,14 @@ import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TileEntityParabox extends TileEntityBasicTickable {
 
@@ -30,7 +36,9 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	protected int remainingTicks = 0;
 	protected int generatedPoints = 0;
 	protected boolean active = false;
-	protected boolean confirmed = false;
+	protected Set<UUID> activators = new HashSet<>();
+	protected Set<UUID> deactivators = new HashSet<>();
+	protected Set<UUID> collapsers = new HashSet<>();
 
 	public TileEntityParabox() {
 
@@ -93,9 +101,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 			this.setActive(false);
 		}
 
-		if (this.world.isRemote || !this.active) {
-
-		return; }
+		if (this.world.isRemote || !this.active) { return; }
 
 		if (this.remainingTicks < 0) {
 
@@ -163,22 +169,16 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	public void setActive(boolean state) {
 
 		this.active = state;
-		for (Entry<UUID, ParaboxUserData> data : WorldSpaceTimeManager.getWorldData().getUserData())
-			data.getValue().setActive(state);
 
 		if (state) {
-
 			WorldSpaceTimeManager.initiateWorldBackup();
-		}
-
-		else {
+		} else {
 
 			this.generatedPoints = 0;
 			this.remainingTicks = 0;
 
 			for (Entry<UUID, ParaboxUserData> data : WorldSpaceTimeManager.getWorldData().getUserData()) {
 				data.getValue().setPoints(0);
-				data.getValue().setActive(false);
 			}
 
 			WorldSpaceTimeManager.saveCustomWorldData();
@@ -208,5 +208,41 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		}
 
 		return entries;
+	}
+
+	public void voteActivate(EntityPlayer voter) {
+		activators.add(voter.getGameProfile().getId());
+		Parabox.sendMessage(TextFormatting.RED, "parabox.status.active_vote", voter.getDisplayName());
+		if (hasEveryoneVoted(activators)) {
+			Parabox.sendMessage(TextFormatting.RED, "parabox.status.vote_success");
+			setActive(true);
+			activators.clear();
+		} else Parabox.sendMessage(TextFormatting.RED, "parabox.status.more_votes");
+	}
+
+	public void voteDeactivate(EntityPlayer voter) {
+		deactivators.add(voter.getGameProfile().getId());
+		Parabox.sendMessage(TextFormatting.RED, "parabox.status.deactivate_vote", voter.getDisplayName());
+		if (hasEveryoneVoted(deactivators)) {
+			Parabox.sendMessage(TextFormatting.RED, "parabox.status.vote_success");
+			setActive(false);
+			deactivators.clear();
+		} else Parabox.sendMessage(TextFormatting.RED, "parabox.status.more_votes");
+	}
+
+	public void voteCollapse(EntityPlayer voter) {
+		collapsers.add(voter.getGameProfile().getId());
+		Parabox.sendMessage(TextFormatting.RED, "parabox.status.collapse_vote", voter.getDisplayName());
+		if (hasEveryoneVoted(collapsers)) {
+			Parabox.sendMessage(TextFormatting.RED, "parabox.status.vote_success");
+			WorldSpaceTimeManager.triggerCollapse((WorldServer) world);
+			collapsers.clear();
+		} else Parabox.sendMessage(TextFormatting.RED, "parabox.status.more_votes");
+	}
+
+	private boolean hasEveryoneVoted(Set<UUID> voters) {
+		PlayerList pList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
+		Set<UUID> filtered = voters.stream().filter(id -> pList.getPlayerByUUID(id) != null).collect(Collectors.toSet());
+		return filtered.size() == pList.getPlayers().size();
 	}
 }

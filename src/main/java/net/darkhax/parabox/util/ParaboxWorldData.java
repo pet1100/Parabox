@@ -13,6 +13,8 @@ import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 
+import net.minecraft.util.math.BlockPos;
+
 public class ParaboxWorldData {
 
 	private static final Gson GSON = new Gson();
@@ -24,7 +26,10 @@ public class ParaboxWorldData {
 	private boolean shouldDelete = false;
 
 	@Expose
-	private final Map<UUID, ParaboxUserData> confirmations = new HashMap<>();
+	private final Map<UUID, ParaboxUserData> data = new HashMap<>();
+
+	@Expose
+	private long parabox;
 
 	public boolean isShouldDelete() {
 
@@ -38,22 +43,30 @@ public class ParaboxWorldData {
 
 	public ParaboxUserData getUserData(UUID userId) {
 
-		return this.confirmations.get(userId);
+		return this.data.get(userId);
+	}
+
+	public BlockPos getParabox() {
+		return BlockPos.fromLong(parabox);
+	}
+
+	public void setParabox(BlockPos pos) {
+		this.parabox = pos.toLong();
 	}
 
 	public void addUser(UUID userId, ParaboxUserData data) {
 
-		this.confirmations.put(userId, data);
+		this.data.put(userId, data);
 	}
 
 	public void removeUser(UUID userId) {
 
-		this.confirmations.remove(userId);
+		this.data.remove(userId);
 	}
 
 	public Set<Entry<UUID, ParaboxUserData>> getUserData() {
 
-		return this.confirmations.entrySet();
+		return this.data.entrySet();
 	}
 
 	private ParaboxWorldData(UUID id) {

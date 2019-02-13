@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -108,5 +109,9 @@ public class Parabox {
 		final int j = i / 60;
 		i = i % 60;
 		return i < 10 ? j + ":0" + i : j + ":" + i;
+	}
+
+	public static WorldServer overworld() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0];
 	}
 }

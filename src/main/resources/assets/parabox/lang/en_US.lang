@@ -19,6 +19,11 @@ parabox.status.offline=Status: Offline
 parabox.status.cycle=Next Cycle: %s
 parabox.status.points=Accumulated Points: %d
 parabox.status.unauthorized=Unauthorized User
+parabox.status.active_vote=%s has voted to activate the parabox!
+parabox.status.deactivate_vote=%s has voted to deactivate the parabox!
+parabox.status.collapse_vote=%s has voted to collapse the world!
+parabox.status.more_votes=More votes are still needed.
+parabox.status.vote_success=All players have voted.
 
 #Buttons
 parabox.button.activate=Activate

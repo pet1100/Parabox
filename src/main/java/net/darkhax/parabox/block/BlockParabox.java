@@ -43,9 +43,7 @@ public class BlockParabox extends BlockTileEntity {
 
 			if (box != null && WorldSpaceTimeManager.getWorldData().getUserData(playerIn.getUniqueID()) == null) {
 
-				final ParaboxUserData data = new ParaboxUserData();
-				data.setPosition(pos);
-				data.setHasConfirmed(false);
+				ParaboxUserData data = new ParaboxUserData();
 				WorldSpaceTimeManager.getWorldData().addUser(playerIn.getUniqueID(), data);
 				WorldSpaceTimeManager.saveCustomWorldData();
 			}
