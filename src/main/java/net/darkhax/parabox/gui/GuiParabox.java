@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -70,8 +71,8 @@ public class GuiParabox extends GuiScreen {
 
 		if (button == this.statusButton) {
 			Parabox.NETWORK.sendToServer(new PacketActivate(this.tile.getPos()));
-			//hack for singleplayer
-			if(!FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer()) this.active = !this.active;
+			MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
+			if (s != null && !s.isDedicatedServer()) this.active = !this.active;
 		}
 
 		else if (button == this.confirmationButton) {
