@@ -105,7 +105,7 @@ public class WorldSpaceTimeManager {
 		for (final EntityPlayerMP player : server.getMinecraftServer().getPlayerList().getPlayers()) {
 
 			player.connection.disconnect(new TextComponentString("The world is collapsing!"));
-			Parabox.proxy.onGameShutdown();
+			Parabox.proxy.onGameShutdown(server.getSaveHandler().getWorldDirectory().getName());
 		}
 
 		if (!currentWorldData.getBackupFile().exists()) {

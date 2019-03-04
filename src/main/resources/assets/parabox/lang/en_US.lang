@@ -34,3 +34,8 @@ parabox.tip.activate=Click to activate the Parabox. This will start generating P
 parabox.tip.deactivate=Click to deactivate the Parabox. This will stop generating Prestige Points, and all generated points will be lost.
 parabox.tip.loop.on=You have voted to reset the time loop. All players on the server with boxes need to vote for this option.
 parabox.tip.loop.off=Click this button when you are ready to initiate the loop. If you are on a server, all players with boxes must vote for this option.
+
+#Collapse GUI
+parabox.collapsed=The world has collapsed!
+parabox.reset=A parabox has reset the world to a previous state.
+parabox.return=Return to %s
