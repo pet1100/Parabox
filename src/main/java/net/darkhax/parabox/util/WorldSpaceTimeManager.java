@@ -22,6 +22,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
@@ -202,6 +203,11 @@ public class WorldSpaceTimeManager {
 			restoreSaving();
 			isSaving = false;
 		}
+	}
+
+	@SubscribeEvent
+	public static void login(PlayerLoggedInEvent event) {
+		WorldSpaceTimeManager.getWorldData().getOrCreateData(event.player.getGameProfile().getId());
 	}
 
 	public static void handleFailState() {

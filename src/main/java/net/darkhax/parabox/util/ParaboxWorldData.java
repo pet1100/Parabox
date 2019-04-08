@@ -41,9 +41,13 @@ public class ParaboxWorldData {
 		this.shouldDelete = shouldDelete;
 	}
 
-	public ParaboxUserData getUserData(UUID userId) {
-
-		return this.data.get(userId);
+	public ParaboxUserData getOrCreateData(UUID userId) {
+		ParaboxUserData data = this.data.get(userId);
+		if (data == null) {
+			this.data.put(userId, new ParaboxUserData());
+			WorldSpaceTimeManager.saveCustomWorldData();
+		}
+		return data;
 	}
 
 	public BlockPos getParabox() {
@@ -52,16 +56,6 @@ public class ParaboxWorldData {
 
 	public void setParabox(BlockPos pos) {
 		this.parabox = pos.toLong();
-	}
-
-	public void addUser(UUID userId, ParaboxUserData data) {
-
-		this.data.put(userId, data);
-	}
-
-	public void removeUser(UUID userId) {
-
-		this.data.remove(userId);
 	}
 
 	public Set<Entry<UUID, ParaboxUserData>> getUserData() {

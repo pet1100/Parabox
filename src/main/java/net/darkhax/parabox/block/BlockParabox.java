@@ -2,7 +2,6 @@ package net.darkhax.parabox.block;
 
 import net.darkhax.bookshelf.block.BlockTileEntity;
 import net.darkhax.parabox.Parabox;
-import net.darkhax.parabox.util.ParaboxUserData;
 import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -36,21 +35,7 @@ public class BlockParabox extends BlockTileEntity {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-
-		if (!worldIn.isRemote && !WorldSpaceTimeManager.isSaving()) {
-
-			final TileEntityParabox box = getParabox(worldIn, pos);
-
-			if (box != null && WorldSpaceTimeManager.getWorldData().getUserData(playerIn.getUniqueID()) == null) {
-
-				ParaboxUserData data = new ParaboxUserData();
-				WorldSpaceTimeManager.getWorldData().addUser(playerIn.getUniqueID(), data);
-				WorldSpaceTimeManager.saveCustomWorldData();
-			}
-		}
-
-		else {
-
+		if (!worldIn.isRemote) {
 			playerIn.openGui(Parabox.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 
