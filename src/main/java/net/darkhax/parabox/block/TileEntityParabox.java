@@ -27,10 +27,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TileEntityParabox extends TileEntityBasicTickable {
 
-	private static final int max = Integer.MAX_VALUE;
-	private static final int maxRecieve = 120000;
-	private static final int cycleTime = 24000;
-	private static final NumberFormat format = NumberFormat.getNumberInstance(Locale.getDefault());
+	public static int max = Integer.MAX_VALUE;
+	public static int maxReceive = 120000;
+	public static int cycleTime = 24000;
+	public static int powerFactor = 100000;
+	public static NumberFormat format = NumberFormat.getNumberInstance(Locale.getDefault());
 
 	protected EnergyHandlerParabox energyHandler;
 	protected int remainingTicks = 0;
@@ -42,7 +43,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public TileEntityParabox() {
 
-		this.energyHandler = new EnergyHandlerParabox(max, maxRecieve);
+		this.energyHandler = new EnergyHandlerParabox(max, maxReceive);
 	}
 
 	public int getPower() {
@@ -87,7 +88,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	@Override
 	public void readNBT(NBTTagCompound dataTag) {
 
-		this.energyHandler = new EnergyHandlerParabox(max, maxRecieve, dataTag.getInteger("StoredPower"));
+		this.energyHandler = new EnergyHandlerParabox(max, maxReceive, dataTag.getInteger("StoredPower"));
 		this.remainingTicks = dataTag.getInteger("RemainingTicks");
 		this.generatedPoints = dataTag.getInteger("Points");
 		this.active = dataTag.getBoolean("Active");
@@ -153,7 +154,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public int getRequiredPower() {
 
-		return (this.generatedPoints + 1) * 100000;
+		return (this.generatedPoints + 1) * powerFactor;
 	}
 
 	public int getRemainingTicks() {

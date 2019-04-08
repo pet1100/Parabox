@@ -68,6 +68,9 @@ public class Parabox {
 		Configuration c = new Configuration(event.getSuggestedConfigurationFile());
 		for (String s : c.getStringList("Backup Blacklist", "general", new String[] { "playerdata", "advancements", "level.dat" }, "The names of files/folders that will not be restored by a state backup."))
 			BlacklistedFileUtils.IGNORED.add(s);
+		TileEntityParabox.powerFactor = c.getInt("Power Factor", "general", 100000, 1, Integer.MAX_VALUE / 100, "Power usage factor per cycle.");
+		TileEntityParabox.cycleTime = c.getInt("Cycle Time", "general", 24000, 1, Integer.MAX_VALUE, "Tick time for a single cycle.");
+		TileEntityParabox.maxReceive = c.getInt("Max Receive", "general", 120000, 1, Integer.MAX_VALUE, "Max power input per tick to the parabox.");
 		if (c.hasChanged()) c.save();
 		MinecraftForge.EVENT_BUS.register(proxy);
 	}
