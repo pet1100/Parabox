@@ -7,7 +7,7 @@ info.parabox.disconnect=Time and space have destabalized on the server. Try reco
 info.parabox.update.daily=You have generated another prestige point. The parabox now requires %d power.
 info.parabox.update.warn=Your Parabox device does not have enough power. You will lose %d Prestige Points if you do not provide %d power in %s.
 info.parabox.update.deactivate=Your Parabox device did not meet the power demands and deactivated. %d Prestige Points were lost. 
-info.parabox.duplicate=Only one Parabox may be in the world.
+info.parabox.duplicate=A parabox already exists at %s.
 
 #Status
 parabox.status.backup=This world has been put in a time loop. All progress in this world should be considered temporary until the time loop has closed. 

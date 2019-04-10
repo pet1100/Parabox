@@ -35,7 +35,7 @@ public class BlockParabox extends BlockTileEntity {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
+		if (worldIn.isRemote) {
 			playerIn.openGui(Parabox.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 
@@ -44,16 +44,13 @@ public class BlockParabox extends BlockTileEntity {
 
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-
 		final TileEntityParabox box = getParabox(world, pos);
 
 		if (box != null) {
-
 			box.setActive(false);
 			WorldSpaceTimeManager.getWorldData().getUserData().clear();
 			return super.removedByPlayer(state, world, pos, player, willHarvest);
 		}
-
 		return false;
 	}
 

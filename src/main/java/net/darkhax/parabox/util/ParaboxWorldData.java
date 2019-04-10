@@ -11,22 +11,23 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 import net.minecraft.util.math.BlockPos;
 
 public class ParaboxWorldData {
 
-	private static final Gson GSON = new Gson();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@Expose
-	private final UUID worldId;
+	private UUID worldId;
 
 	@Expose
 	private boolean shouldDelete = false;
 
 	@Expose
-	private final Map<UUID, ParaboxUserData> data = new HashMap<>();
+	private Map<UUID, ParaboxUserData> data = new HashMap<>();
 
 	@Expose
 	private long parabox;
@@ -45,7 +46,7 @@ public class ParaboxWorldData {
 		ParaboxUserData data = this.data.get(userId);
 		if (data == null) {
 			this.data.put(userId, new ParaboxUserData());
-			WorldSpaceTimeManager.saveCustomWorldData();
+			WorldSpaceTimeManager.requireSaving();
 		}
 		return data;
 	}
@@ -104,7 +105,9 @@ public class ParaboxWorldData {
 
 		try (FileReader reader = new FileReader(dataFile)) {
 
-			return GSON.fromJson(reader, ParaboxWorldData.class);
+			ParaboxWorldData wData = GSON.fromJson(reader, ParaboxWorldData.class);
+			if (wData.data == null) wData.data = new HashMap<>();
+			return wData;
 		}
 
 		catch (final IOException e) {

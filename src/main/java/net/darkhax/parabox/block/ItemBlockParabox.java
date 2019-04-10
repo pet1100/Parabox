@@ -31,9 +31,9 @@ public class ItemBlockParabox extends ItemBlock {
 		}
 
 		// Prevent two boxes from being placed.
-		else if (!world.isRemote && !WorldSpaceTimeManager.getWorldData().getUserData().isEmpty()) {
+		else if (!world.isRemote && BlockParabox.getParabox(world, WorldSpaceTimeManager.getWorldData().getParabox()) != null) {
 
-			Parabox.sendMessage(player, TextFormatting.RED, "info.parabox.duplicate");
+			Parabox.sendMessage(player, TextFormatting.RED, "info.parabox.duplicate", WorldSpaceTimeManager.getWorldData().getParabox());
 			return false;
 		}
 
