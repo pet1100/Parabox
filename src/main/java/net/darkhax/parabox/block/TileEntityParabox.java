@@ -154,7 +154,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public int getRequiredPower() {
 
-		return (this.generatedPoints + 1) * powerFactor;
+		return (int) Math.min((this.generatedPoints + 1D) * powerFactor, Integer.MAX_VALUE);
 	}
 
 	public int getRemainingTicks() {
