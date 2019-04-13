@@ -2,7 +2,6 @@ package net.darkhax.parabox.block;
 
 import net.darkhax.bookshelf.block.BlockTileEntity;
 import net.darkhax.parabox.Parabox;
-import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -47,8 +46,7 @@ public class BlockParabox extends BlockTileEntity {
 		final TileEntityParabox box = getParabox(world, pos);
 
 		if (box != null) {
-			box.setActive(false);
-			WorldSpaceTimeManager.getWorldData().getUserData().clear();
+			if (!world.isRemote) box.setActive(false);
 			return super.removedByPlayer(state, world, pos, player, willHarvest);
 		}
 		return false;

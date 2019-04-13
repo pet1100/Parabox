@@ -171,7 +171,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 		this.active = state;
 
-		if (state) {
+		if (active) {
 			WorldSpaceTimeManager.initiateWorldBackup();
 		} else {
 

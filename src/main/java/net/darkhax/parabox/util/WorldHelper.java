@@ -57,7 +57,6 @@ public class WorldHelper {
 				Parabox.LOG.info("Saving data for world: " + WorldUtils.getWorldName(world));
 				world.saveAllChunks(true, null);
 			} catch (final MinecraftException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

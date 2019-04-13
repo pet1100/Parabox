@@ -37,15 +37,6 @@ import org.apache.commons.io.IOUtils;
  *
  */
 public class ZipUtils {
-	/*
-	 * @param directoryPath The path of the directory where the  will be created. eg.
-	 * c:/temp
-	 * @param zipFile The full path of the  to create. eg. c:/temp/.zip
-	 */
-	public static void createZip(String directoryPath, String zipPath) throws IOException {
-
-		createZip(new File(directoryPath), new File(zipPath));
-	}
 
 	/**
 	 * Creates a zip file at the specified path with the contents of the specified directory.
@@ -80,6 +71,7 @@ public class ZipUtils {
 
 		String entryName = base + f.getName();
 		entryName = f.isDirectory() && !entryName.endsWith("/") ? entryName + "/" : entryName;
+		if (BlacklistedFileUtils.isBlacklisted(entryName)) return;
 		final ZipEntry zipEntry = new ZipEntry(entryName);
 		if (f.isFile()) {
 			zipEntry.setSize(f.length());
