@@ -33,8 +33,6 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -75,7 +73,6 @@ public class Parabox {
 		TileEntityParabox.maxReceive = c.getInt("Max Receive", "general", 120000, 1, Integer.MAX_VALUE, "Max power input per tick to the parabox.");
 		if (c.hasChanged()) c.save();
 		MinecraftForge.EVENT_BUS.register(proxy);
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@EventHandler
@@ -86,13 +83,6 @@ public class Parabox {
 	@EventHandler
 	public void serverStop(FMLServerStoppedEvent event) {
 		WorldSpaceTimeManager.onGameInstanceClose();
-	}
-
-	@SubscribeEvent
-	public void login(PlayerLoggedInEvent event) {
-		FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0].loadedTileEntityList.forEach(e -> {
-			if (e instanceof TileEntityParabox && ((TileEntityParabox) e).isActive()) sendMessage(event.player, TextFormatting.GOLD, "info.parabox.active");
-		});
 	}
 
 	public static void sendMessage(TextFormatting color, String text, Object... args) {

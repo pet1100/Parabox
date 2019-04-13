@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -94,9 +95,8 @@ public class WorldSpaceTimeManager {
 	}
 
 	public static void initiateWorldBackup() {
-
 		if (!currentWorldData.getBackupFile().exists() && !isSaving) {
-
+			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.backup");
 			requireSaving = true;
 		}
 	}
@@ -208,6 +208,9 @@ public class WorldSpaceTimeManager {
 	@SubscribeEvent
 	public static void login(PlayerLoggedInEvent event) {
 		WorldSpaceTimeManager.getWorldData().getOrCreateData(event.player.getGameProfile().getId());
+		FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0].loadedTileEntityList.forEach(e -> {
+			if (e instanceof TileEntityParabox && ((TileEntityParabox) e).isActive()) Parabox.sendMessage(event.player, TextFormatting.GOLD, "info.parabox.active");
+		});
 	}
 
 	public static void handleFailState() {

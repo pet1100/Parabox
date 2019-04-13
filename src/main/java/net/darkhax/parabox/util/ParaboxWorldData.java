@@ -46,7 +46,7 @@ public class ParaboxWorldData {
 		ParaboxUserData data = this.data.get(userId);
 		if (data == null) {
 			this.data.put(userId, new ParaboxUserData());
-			if (!WorldSpaceTimeManager.isSaving()) WorldSpaceTimeManager.saveCustomWorldData();
+			WorldSpaceTimeManager.saveCustomWorldData();
 		}
 		return data;
 	}
