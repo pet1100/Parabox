@@ -8,6 +8,7 @@ info.parabox.update.daily=You have generated another prestige point. The parabox
 info.parabox.update.warn=Your Parabox device does not have enough power. You will lose %d Prestige Points if you do not provide %d power in %s.
 info.parabox.update.deactivate=Your Parabox device did not meet the power demands and deactivated. %d Prestige Points were lost. 
 info.parabox.duplicate=A parabox already exists at %s.
+info.parabox.active=A parabox is currently active.  This world is temporary!
 
 #Status
 parabox.status.backup=This world has been put in a time loop. All progress in this world should be considered temporary until the time loop has closed. 
