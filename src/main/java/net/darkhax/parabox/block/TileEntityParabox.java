@@ -97,12 +97,12 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	@Override
 	public void onEntityUpdate() {
 
+		if (this.world.isRemote || !this.active) { return; }
+
 		if ((WorldSpaceTimeManager.getWorldData() == null || !WorldSpaceTimeManager.getWorldData().getBackupFile().exists()) && this.active && !WorldSpaceTimeManager.isSaving() && !WorldSpaceTimeManager.requireSaving()) {
 
 			this.setActive(false);
 		}
-
-		if (this.world.isRemote || !this.active) { return; }
 
 		if (this.remainingTicks < 0) {
 
