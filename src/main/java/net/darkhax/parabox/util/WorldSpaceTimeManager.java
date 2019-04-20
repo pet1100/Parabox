@@ -61,9 +61,9 @@ public class WorldSpaceTimeManager {
 	public static void onGameInstanceClose() {
 
 		Parabox.LOG.info("Saving Parabox world data.");
-		currentWorldData.save(currentSaveRootDirectory);
+		getWorldData().save(currentSaveRootDirectory);
 
-		if (currentWorldData.isShouldDelete()) {
+		if (getWorldData().isShouldDelete()) {
 
 			Parabox.LOG.info("World has been marked for deletion. Starting world loop process.");
 
@@ -72,10 +72,10 @@ public class WorldSpaceTimeManager {
 				Parabox.LOG.info("Deleting the current world file.");
 				BlacklistedFileUtils.delete(currentSaveRootDirectory);
 				Parabox.LOG.info("Restoring the initial world backup.");
-				BlacklistedFileUtils.unzipFolder(currentWorldData.getBackupFile(), currentSaveRootDirectory.getParentFile());
-				currentWorldData.getBackupFile().delete();
+				BlacklistedFileUtils.unzipFolder(getWorldData().getBackupFile(), currentSaveRootDirectory.getParentFile());
+				getWorldData().getBackupFile().delete();
 
-				for (final Entry<UUID, ParaboxUserData> entry : currentWorldData.getUserData()) {
+				for (final Entry<UUID, ParaboxUserData> entry : getWorldData().getUserData()) {
 
 					final PlayerData prestigeData = GlobalPrestigeData.getPlayerData(entry.getKey());
 					prestigeData.addPrestige(entry.getValue().getPoints());
@@ -95,7 +95,7 @@ public class WorldSpaceTimeManager {
 	}
 
 	public static void initiateWorldBackup() {
-		if (!currentWorldData.getBackupFile().exists() && !isSaving) {
+		if (!getWorldData().getBackupFile().exists() && !isSaving) {
 			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.backup");
 			requireSaving = true;
 		}
@@ -109,13 +109,13 @@ public class WorldSpaceTimeManager {
 			Parabox.proxy.onGameShutdown(server.getSaveHandler().getWorldDirectory().getName());
 		}
 
-		if (!currentWorldData.getBackupFile().exists()) {
+		if (!getWorldData().getBackupFile().exists()) {
 
-			Parabox.LOG.warn("Attempted to do a world reset, but no world backup found. This mod will not work as intended if the backup file {} is not restored.", currentWorldData.getBackupFile().getPath());
+			Parabox.LOG.warn("Attempted to do a world reset, but no world backup found. This mod will not work as intended if the backup file {} is not restored.", getWorldData().getBackupFile().getPath());
 			return;
 		}
 
-		currentWorldData.setShouldDelete(true);
+		getWorldData().setShouldDelete(true);
 		WorldHelper.shutdown();
 	}
 
@@ -169,8 +169,7 @@ public class WorldSpaceTimeManager {
 	}
 
 	public static void saveCustomWorldData() {
-
-		if (currentWorldData != null && currentSaveRootDirectory != null) currentWorldData.save(currentSaveRootDirectory);
+		if (getWorldData() != null && currentSaveRootDirectory != null) getWorldData().save(currentSaveRootDirectory);
 	}
 
 	@SubscribeEvent
@@ -189,10 +188,10 @@ public class WorldSpaceTimeManager {
 				requireSaving = false;
 				WorldHelper.saveWorld();
 
-				Parabox.LOG.info("Creating snapshot of world at " + currentWorldData.getBackupFile().getName());
-				ZipUtils.createZip(currentSaveRootDirectory, currentWorldData.getBackupFile());
+				Parabox.LOG.info("Creating snapshot of world at " + getWorldData().getBackupFile().getName());
+				ZipUtils.createZip(currentSaveRootDirectory, getWorldData().getBackupFile());
 				Parabox.LOG.info("Snapshot created succesffully.");
-				currentWorldData.save(currentSaveRootDirectory);
+				getWorldData().save(currentSaveRootDirectory);
 			} catch (final IOException e) {
 
 			}
@@ -217,15 +216,15 @@ public class WorldSpaceTimeManager {
 
 		boolean noActiveUsers = true;
 
-		TileEntityParabox box = BlockParabox.getParabox(Parabox.overworld(), currentWorldData.getParabox());
+		TileEntityParabox box = BlockParabox.getParabox(Parabox.overworld(), getWorldData().getParabox());
 
 		if (box != null && box.isActive()) {
 			noActiveUsers = false;
 		}
 
-		if (noActiveUsers && currentWorldData.getBackupFile().exists()) {
+		if (noActiveUsers && getWorldData().getBackupFile().exists()) {
 
-			currentWorldData.getBackupFile().delete();
+			getWorldData().getBackupFile().delete();
 
 			final PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
 			if (playerList != null) {

@@ -106,6 +106,7 @@ public class ParaboxWorldData {
 		try (FileReader reader = new FileReader(dataFile)) {
 
 			ParaboxWorldData wData = GSON.fromJson(reader, ParaboxWorldData.class);
+			if (wData == null) wData = new ParaboxWorldData(UUID.randomUUID());
 			if (wData.data == null) wData.data = new HashMap<>();
 			return wData;
 		}
