@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 
 import net.minecraft.util.math.BlockPos;
@@ -105,14 +106,20 @@ public class ParaboxWorldData {
 
 		try (FileReader reader = new FileReader(dataFile)) {
 
-			ParaboxWorldData wData = GSON.fromJson(reader, ParaboxWorldData.class);
+			ParaboxWorldData wData = null;
+
+			try {
+				wData = GSON.fromJson(reader, ParaboxWorldData.class);
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			}
+
 			if (wData == null) wData = new ParaboxWorldData(UUID.randomUUID());
 			if (wData.data == null) wData.data = new HashMap<>();
 			return wData;
 		}
 
 		catch (final IOException e) {
-
 			e.printStackTrace();
 		}
 
