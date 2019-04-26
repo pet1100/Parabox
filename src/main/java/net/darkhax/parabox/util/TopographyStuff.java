@@ -10,7 +10,7 @@ public class TopographyStuff {
 
 	public static boolean isCompactMachineLand(World world) {
 		String s = ConfigurationManager.getInstance().getGeneratorSettings();
-		return s.toLowerCase(Locale.ROOT).contains("compactsky") && world.provider.getDimension() == 144;
+		return s != null && s.toLowerCase(Locale.ROOT).contains("compactsky") && world.provider.getDimension() == 144;
 	}
 
 }

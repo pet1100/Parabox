@@ -246,4 +246,8 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		Set<UUID> filtered = voters.stream().filter(id -> pList.getPlayerByUUID(id) != null).collect(Collectors.toSet());
 		return filtered.size() == pList.getPlayers().size();
 	}
+
+	public int getGeneratedPoints() {
+		return this.generatedPoints;
+	}
 }

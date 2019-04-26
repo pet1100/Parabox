@@ -58,12 +58,8 @@ public class GuiParabox extends GuiScreen {
 		this.confirmationButton = new GuiButton(1, this.startX + xSize - 74, this.startY + 89, 60, 20, I18n.format("parabox.button.loop.off"));
 		this.buttonList.add(this.statusButton);
 		this.buttonList.add(this.confirmationButton);
-
-		if (!this.active) {
-
-			this.confirmationButton.enabled = false;
-			this.confirmationButton.visible = false;
-		}
+		this.confirmationButton.enabled = this.active && this.tile.getGeneratedPoints() > 0;
+		this.confirmationButton.visible = this.active;
 	}
 
 	@Override
@@ -121,6 +117,9 @@ public class GuiParabox extends GuiScreen {
 		else if (this.confirmationButton.isMouseOver() && this.confirmationButton.enabled) {
 
 			this.drawHoveringText(I18n.format("parabox.tip.loop.off"), mouseX, mouseY + this.fontRenderer.FONT_HEIGHT);
+		}
+		if(this.active) {
+			this.confirmationButton.enabled = this.tile.getGeneratedPoints() > 0;
 		}
 	}
 
