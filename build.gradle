@@ -61,16 +61,15 @@ processResources {
 }
 
 repositories {
-
     maven {
-
         url 'https://maven.mcmoddev.com'
     }
-    
     maven {
-    
         url 'http://tehnut.info/maven'
     }
+	maven {
+		url 'https://minecraft.curseforge.com/api/maven'
+	}
 }
 
 dependencies {
@@ -78,4 +77,6 @@ dependencies {
     deobfCompile "net.darkhax.bookshelf:Bookshelf-1.12.2:${version_bookshelf}"
     deobfCompile "com.jarhax.prestige:Prestige-1.12.2:${version_prestige}"
     deobfCompile "mcp.mobius.waila:Hwyla:${version_hwyla}"
+	deobfCompile "bnbgaminglib:BNBGamingLib:1.12.2:2.17.6"
+	deobfCompile "topography:Topography:1.12.2:1.5.1"
 }

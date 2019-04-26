@@ -1,7 +1,7 @@
 package net.darkhax.parabox.block;
 
-import net.darkhax.bookshelf.util.WorldUtils;
 import net.darkhax.parabox.Parabox;
+import net.darkhax.parabox.util.TopographyStuff;
 import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 
 public class ItemBlockParabox extends ItemBlock {
 
@@ -22,17 +23,12 @@ public class ItemBlockParabox extends ItemBlock {
 
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
-
-		// Prevent placing in non surface dimensions
-		if (WorldUtils.getDimensionId(world) != 0) {
-
+		if (!isValidDimension(world)) {
 			Parabox.sendMessage(player, TextFormatting.RED, "info.parabox.dimension");
 			return false;
 		}
 
-		// Prevent two boxes from being placed.
 		else if (!world.isRemote && BlockParabox.getParabox(world, WorldSpaceTimeManager.getWorldData().getParabox()) != null) {
-
 			Parabox.sendMessage(player, TextFormatting.RED, "info.parabox.duplicate", WorldSpaceTimeManager.getWorldData().getParabox());
 			return false;
 		}
@@ -41,6 +37,12 @@ public class ItemBlockParabox extends ItemBlock {
 			if (!world.isRemote) WorldSpaceTimeManager.getWorldData().setParabox(pos);
 			return true;
 		}
+
 		return false;
+	}
+
+	boolean isValidDimension(World world) {
+		if (Loader.isModLoaded("topography") && TopographyStuff.isCompactMachineLand(world)) return true;
+		return world.provider.getDimension() == 0;
 	}
 }
