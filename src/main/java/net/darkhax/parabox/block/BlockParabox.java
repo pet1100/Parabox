@@ -24,6 +24,7 @@ public class BlockParabox extends BlockTileEntity {
 		this.setHardness(50.0F);
 		this.setResistance(2000.0F);
 		this.setSoundType(SoundType.STONE);
+		this.setLightOpacity(0);
 	}
 
 	@Override
