@@ -71,16 +71,17 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 				data.getValue().setPoints(this.points);
 			WorldSpaceTimeManager.saveCustomWorldData();
 			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.update.daily", this.getRFTNeeded());
-			this.cycleTimeLeft = cycleTime;
+			this.cycleTimeLeft = getCycleTime();
 			this.energyHandler.updateValues(getRFTNeeded() * 2);
 			this.itemHandler.randomizeTarget();
 		}
 	}
 
 	public void activate() {
+		this.active = true;
 		WorldSpaceTimeManager.initiateWorldBackup();
 		this.points = 0;
-		this.cycleTimeLeft = cycleTime;
+		this.cycleTimeLeft = getCycleTime();
 		this.ticksOnline = 0;
 		this.energyHandler.updateValues(getRFTNeeded() * 2);
 		this.itemHandler.randomizeTarget();
@@ -88,6 +89,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	}
 
 	public void deactivate() {
+		this.active = false;
 		this.points = 0;
 
 		for (Entry<UUID, ParaboxUserData> data : WorldSpaceTimeManager.getWorldData().getUserData()) {
@@ -189,6 +191,10 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public VotingHandler getVoter() {
 		return this.voter;
+	}
+
+	public int getCycleTime() {
+		return cycleTime;
 	}
 
 }

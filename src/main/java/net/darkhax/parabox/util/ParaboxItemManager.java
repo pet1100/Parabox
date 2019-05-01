@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.darkhax.parabox.Parabox;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,11 +49,13 @@ public class ParaboxItemManager {
 		for (IRecipe recipe : ForgeRegistries.RECIPES) {
 			if (!recipe.isDynamic()) ParaboxItemManager.CRAFTING_ITEMS.add(recipe.getRecipeOutput().copy());
 		}
+
 		List<ItemStack> stacks = CRAFTING_ITEMS.stream().filter(ParaboxItemManager::isAllowed).collect(Collectors.toList());
 		CRAFTING_ITEMS.clear();
 		CRAFTING_ITEMS.addAll(stacks);
 		CRAFTING_MOD_BLACKLIST.clear();
 		CRAFTING_BLACKLIST.clear();
+		CRAFTING_ITEMS.removeIf(ItemStack::isEmpty);
 
 		if (dumpCrafting) {
 			Parabox.LOG.info("Starting crafting list dump!");
@@ -85,9 +88,18 @@ public class ParaboxItemManager {
 			}
 			CRAFTING_BLACKLIST.add(new ItemStack(i, 1, meta));
 		}
+		dumpCrafting = c.getBoolean("Dump Crafting List", "items", false, "If the crafting list (post-filter) is dumped to the log.");
 	}
 
 	static void loadEmpoweredList() {
+		if (EMPOWERED_ITEMS.isEmpty()) {
+			Parabox.LOG.info("Empowered item list is empty!  This is not good.  Substituting with balanced objects so we don't crash later.");
+			EMPOWERED_ITEMS.add(new ItemStack(Items.CLAY_BALL));
+			EMPOWERED_ITEMS.add(new ItemStack(Blocks.CLAY));
+		}
+
+		EMPOWERED_ITEMS.removeIf(ItemStack::isEmpty);
+
 		if (dumpEmpowered) {
 			Parabox.LOG.info("Starting empowered list dump!");
 			EMPOWERED_ITEMS.forEach(s -> Parabox.LOG.info("Entry: {}", s.getItem().getRegistryName() + ":" + s.getMetadata()));
@@ -96,7 +108,8 @@ public class ParaboxItemManager {
 	}
 
 	static void loadEmpoweredConfigs(Configuration c) {
-		String[] items = c.getStringList("Empowered Parabox Items", "items", new String[0], "The list of valid items for the Empowered Parabox.  Format modid:name:meta");
+		String[] def = new String[] { "minecraft:diamond_block:0", "minecraft:emerald_block:0", "parabox:parabox:0", "minecraft:acacia_boat:0" };
+		String[] items = c.getStringList("Empowered Parabox Items", "items", def, "The list of valid items for the Empowered Parabox.  Format modid:name:meta");
 		for (String s : items) {
 			String[] split = s.split(":");
 			if (split.length != 3) {
@@ -117,6 +130,7 @@ public class ParaboxItemManager {
 			}
 			EMPOWERED_ITEMS.add(new ItemStack(i, 1, meta));
 		}
+		dumpEmpowered = c.getBoolean("Dump Empowered List", "items", false, "If the empowered list (post-filter) is dumped to the log.");
 	}
 
 }

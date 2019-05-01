@@ -4,13 +4,16 @@ tile.parabox.parabox.name=Parabox
 #Info
 info.parabox.dimension=A temporal anomaly prevents placing this here.
 info.parabox.disconnect=Time and space have destabalized on the server. Try reconnecting in a few minutes.
-info.parabox.update.daily=You have generated another prestige point. The parabox now requires %d RF/t.
+info.parabox.update.daily=You have generated another prestige point. The Parabox now requires %d RF/t.
 info.parabox.update.warn=Your Parabox device does not have enough power. You will lose %d Prestige Points if you do not provide %d power in %s.
 info.parabox.update.deactivate=Your Parabox device did not meet the power demands and deactivated. %d Prestige Points were lost. 
-info.parabox.duplicate=A parabox already exists at %s.
-info.parabox.active=A parabox is currently active. This world is temporary!
+info.parabox.duplicate=A Parabox already exists at %s.
+info.parabox.active=A Parabox is currently active. This world is temporary!
 info.parabox.backup=A world backup has been initiated. Expect lag.
 info.parabox.update.item=%s has been provided.  Cycle time decreased by 1 minute.  Required item changing...
+info.parabox.emp.update.item=%s has been provided.  Cycle time decreased by 3 minutes.  Required item changing...
+info.parabox.update.daily=You have generated another prestige point. The Empowered Parabox now requires %s items per cycle.
+
 
 #Status
 parabox.status.backup=This world has been put in a time loop. All progress in this world should be considered temporary until the time loop has closed. 
@@ -23,8 +26,8 @@ parabox.status.cycle=Next Cycle: %s
 parabox.status.points=Accumulated Points: %d
 parabox.status.accelfactor=Acceleration: %s
 parabox.status.unauthorized=Unauthorized User
-parabox.status.active_vote=%s has voted to activate the parabox!
-parabox.status.deactivate_vote=%s has voted to deactivate the parabox!
+parabox.status.active_vote=%s has voted to activate the Parabox!
+parabox.status.deactivate_vote=%s has voted to deactivate the Parabox!
 parabox.status.collapse_vote=%s has voted to collapse the world!
 parabox.status.more_votes=More votes are still needed.
 parabox.status.vote_success=All players have voted.
@@ -42,5 +45,5 @@ parabox.tip.loop.off=Click this button when you are ready to initiate the loop. 
 
 #Collapse GUI
 parabox.collapsed=The world has collapsed!
-parabox.reset=A parabox has reset the world to a previous state.
+parabox.reset=A Parabox has reset the world to a previous state.
 parabox.return=Return to %s

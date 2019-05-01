@@ -8,6 +8,8 @@ import net.darkhax.bookshelf.registry.RegistryHelper;
 import net.darkhax.parabox.block.BlockParabox;
 import net.darkhax.parabox.block.ItemBlockParabox;
 import net.darkhax.parabox.block.TileEntityParabox;
+import net.darkhax.parabox.block.v2.BlockParaboxV2;
+import net.darkhax.parabox.block.v2.TileEntityParaboxV2;
 import net.darkhax.parabox.gui.GuiHandler;
 import net.darkhax.parabox.network.PacketActivate;
 import net.darkhax.parabox.network.PacketConfirmReset;
@@ -19,7 +21,6 @@ import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
@@ -65,13 +66,17 @@ public class Parabox {
 
 		BlockParabox block = new BlockParabox();
 		REGISTRY.registerBlock(block, new ItemBlockParabox(block), "parabox");
-		GameRegistry.registerTileEntity(TileEntityParabox.class, new ResourceLocation(MODID, "parabox"));
+		GameRegistry.registerTileEntity(TileEntityParabox.class, block.getRegistryName());
+
+		block = new BlockParaboxV2();
+		REGISTRY.registerBlock(block, new ItemBlockParabox(block), "empowered_parabox");
+		GameRegistry.registerTileEntity(TileEntityParaboxV2.class, block.getRegistryName());
+
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		for (String s : config.getStringList("Backup Blacklist", "general", new String[] { "playerdata", "advancements", "level.dat" }, "The names of files/folders that will not be restored by a state backup."))
 			BlacklistedFileUtils.IGNORED.add(s);
 		TileEntityParabox.rfPerTick = config.getInt("RF/t", "general", 400, 1, Integer.MAX_VALUE, "Power usage factor per cycle.");
 		TileEntityParabox.cycleTime = config.getInt("Cycle Time", "general", 12000, 1, Integer.MAX_VALUE, "Tick time for a single cycle.");
-		ParaboxItemManager.dumpCrafting = config.getBoolean("Dump Crafting List", "items", false, "If the crafting list (post-filter) is dumped to the log.");
 
 		if (config.hasChanged()) config.save();
 		MinecraftForge.EVENT_BUS.register(proxy);
