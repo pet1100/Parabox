@@ -26,9 +26,8 @@ public class PacketActivate extends TileEntityMessage<TileEntityParabox> {
 
 	@Override
 	public void getAction() {
-
-		if (this.tile.isActive()) this.tile.voteDeactivate(this.context.getServerHandler().player);
-		else this.tile.voteActivate(this.context.getServerHandler().player);
+		if (this.tile.isActive()) this.tile.getVoter().voteDeactivate(this.context.getServerHandler().player);
+		else this.tile.getVoter().voteActivate(this.context.getServerHandler().player);
 		this.tile.sync();
 	}
 

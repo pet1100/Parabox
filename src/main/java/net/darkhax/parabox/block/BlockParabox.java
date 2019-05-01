@@ -12,13 +12,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockParabox extends BlockTileEntity {
 
 	public BlockParabox() {
-
 		super(Material.ROCK);
 		this.setResistance(6000000.0F);
 		this.setHardness(50.0F);
@@ -29,7 +26,6 @@ public class BlockParabox extends BlockTileEntity {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-
 		return new TileEntityParabox();
 	}
 
@@ -45,9 +41,8 @@ public class BlockParabox extends BlockTileEntity {
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 		final TileEntityParabox box = getParabox(world, pos);
-
 		if (box != null) {
-			if (!world.isRemote) box.setActive(false);
+			if (!world.isRemote) box.deactivate();
 			return super.removedByPlayer(state, world, pos, player, willHarvest);
 		}
 		return false;
@@ -55,27 +50,21 @@ public class BlockParabox extends BlockTileEntity {
 
 	@Override
 	public boolean isFullCube(IBlockState state) {
-
 		return false;
 	}
 
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
-
 		return false;
 	}
 
 	public static TileEntityParabox getParabox(World world, BlockPos pos) {
-
-		final TileEntity tile = world.getTileEntity(pos);
-
+		TileEntity tile = world.getTileEntity(pos);
 		return tile instanceof TileEntityParabox ? (TileEntityParabox) tile : null;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getRenderLayer() {
-
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 }

@@ -26,7 +26,7 @@ public class PacketConfirmReset extends TileEntityMessage<TileEntityParabox> {
 
 	@Override
 	public void getAction() {
-		this.tile.voteCollapse(this.context.getServerHandler().player);
+		this.tile.getVoter().voteCollapse(this.context.getServerHandler().player);
 		this.tile.sync();
 	}
 }

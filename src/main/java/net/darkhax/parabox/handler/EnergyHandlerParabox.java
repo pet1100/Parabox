@@ -1,4 +1,4 @@
-package net.darkhax.parabox.block;
+package net.darkhax.parabox.handler;
 
 import net.minecraftforge.energy.EnergyStorage;
 
@@ -12,12 +12,9 @@ public class EnergyHandlerParabox extends EnergyStorage {
 		this.energy = energy;
 	}
 
-	public void setCapacity(int max) {
-		this.capacity = max;
-		this.setEnergy(Math.min(energy, max));
-	}
-
-	public void setInput(int max) {
-		this.maxReceive = max;
+	public void updateValues(int newRFT) {
+		this.capacity = newRFT;
+		this.maxReceive = newRFT;
+		this.setEnergy(Math.min(energy, newRFT));
 	}
 }

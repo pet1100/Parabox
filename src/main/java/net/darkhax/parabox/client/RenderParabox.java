@@ -35,7 +35,7 @@ public class RenderParabox extends TileEntitySpecialRenderer<TileEntityParabox> 
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-		Minecraft.getMinecraft().getRenderItem().renderItem(te.getReqItem(), TransformType.FIXED);
+		Minecraft.getMinecraft().getRenderItem().renderItem(te.getTarget(), TransformType.FIXED);
 
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
