@@ -39,6 +39,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	protected double cycleTimeLeft = 0;
 	protected int points = 0;
 	protected int ticksOnline = 0;
+	protected int power = 0;
 
 	protected VotingHandler voter = new VotingHandler(this);
 	protected EnergyHandlerParabox energyHandler = new EnergyHandlerParabox(rfPerTick * 2, rfPerTick * 2);
@@ -54,7 +55,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		this.ticksOnline++;
 		if (this.ticksOnline < 0) this.ticksOnline = 0;
 
-		int power = energyHandler.getEnergyStored();
+		power = energyHandler.getEnergyStored();
 
 		SpeedFactor factor = SpeedFactor.getForPower(this, power);
 
@@ -133,6 +134,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		dataTag.setLong("Points", this.points);
 		dataTag.setBoolean("Active", this.active);
 		dataTag.setTag("Item", this.itemHandler.getTarget().writeToNBT(new NBTTagCompound()));
+		dataTag.setInteger("Energy", power);
 	}
 
 	@Override
@@ -142,6 +144,8 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		this.points = dataTag.getInteger("Points");
 		this.active = dataTag.getBoolean("Active");
 		this.itemHandler.setTarget(new ItemStack(dataTag.getCompoundTag("Item")));
+		this.energyHandler.updateValues(getRFTNeeded() * 2);
+		if (world != null && world.isRemote) this.energyHandler.setEnergy(dataTag.getInteger("Energy"));
 	}
 
 	@Override

@@ -1,0 +1,16 @@
+{
+	"result": {
+		"item": "parabox:empowered_parabox"
+	},
+	"pattern": [
+		"AAA",
+		"AAA",
+		"AAA"
+	],
+	"type": "forge:ore_shaped",
+	"key": {
+		"A": {
+			"item": "parabox:parabox"
+		}
+	}
+}

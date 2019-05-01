@@ -28,7 +28,7 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 		this.ticksOnline++;
 		if (this.ticksOnline < 0) this.ticksOnline = 0;
 
-		int power = energyHandler.getEnergyStored();
+		power = energyHandler.getEnergyStored();
 
 		SpeedFactor factor = SpeedFactor.getForPower(this, power);
 
