@@ -35,6 +35,7 @@ public class WorldSpaceTimeManager {
 	private static boolean[] oldSaveStates;
 	private static boolean isSaving = false;
 	private static boolean requireSaving = false;
+	private static boolean started = false;
 
 	public static boolean isSaving() {
 
@@ -56,9 +57,11 @@ public class WorldSpaceTimeManager {
 		Parabox.LOG.info("Initializing Parabox world data.");
 		currentSaveRootDirectory = DimensionManager.getCurrentSaveRootDirectory();
 		currentWorldData = ParaboxWorldData.getData(currentSaveRootDirectory);
+		started = true;
 	}
 
 	public static void onGameInstanceClose() {
+		if (!started) return;
 
 		Parabox.LOG.info("Saving Parabox world data.");
 		getWorldData().save(currentSaveRootDirectory);
@@ -92,6 +95,7 @@ public class WorldSpaceTimeManager {
 
 		currentSaveRootDirectory = null;
 		currentWorldData = null;
+		started = false;
 	}
 
 	public static void initiateWorldBackup() {
