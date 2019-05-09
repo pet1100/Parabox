@@ -67,12 +67,12 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 
 	@Override
 	public int getCycleTime() {
-		return super.getCycleTime() * 3 + 3 * 3600 * points;
+		return super.getCycleTime() * 3 + 3600 * (points / 3);
 	}
 
 	@Override
 	public int getRFTNeeded() {
-		return super.getRFTNeeded() * 3;
+		return 3 * (points == 0 ? rfPerTick : floor(0.25 * rfPerTick * points * cycleFactor));
 	}
 
 	@Override
