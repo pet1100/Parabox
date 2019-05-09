@@ -34,6 +34,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	public static int rfPerTick = 400;
 	public static float cycleFactor = 2F;
 	public static NumberFormat format = NumberFormat.getNumberInstance(Locale.getDefault());
+	public static boolean updateMessages = true;
 
 	protected boolean active = false;
 	protected double cycleTimeLeft = 0;
@@ -109,7 +110,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public void provideItem(ItemStack stack) {
 		this.cycleTimeLeft -= 1200;
-		Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.update.item", this.itemHandler.getTarget().getDisplayName());
+		if (updateMessages) Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.update.item", this.itemHandler.getTarget().getDisplayName());
 		this.itemHandler.randomizeTarget();
 	}
 
@@ -197,7 +198,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		return this.voter;
 	}
 
-	public int getCycleTime() {
+	public double getCycleTime() {
 		return cycleTime;
 	}
 

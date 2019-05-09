@@ -18,6 +18,8 @@ import net.minecraft.util.text.TextFormatting;
 
 public class TileEntityParaboxV2 extends TileEntityParabox {
 
+	double itemFactor = 1;
+
 	@Override
 	public void onEntityUpdate() {
 		if (this.world.isRemote || !this.active) return;
@@ -36,15 +38,16 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			this.sync();
 		}
 
-		this.cycleTimeLeft -= factor.getTicksPerTick() / 3;
+		this.cycleTimeLeft -= factor.getTicksPerTick();
 		this.energyHandler.setEnergy(0);
+		this.itemFactor = Math.max(1, factor.getTicksPerTick());
 
 		if (this.cycleTimeLeft <= 0) {
 			this.points += 3;
 			for (Entry<UUID, ParaboxUserData> data : WorldSpaceTimeManager.getWorldData().getUserData())
 				data.getValue().setPoints(this.points);
 			WorldSpaceTimeManager.saveCustomWorldData();
-			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.emp.update.daily", 10 + points * 3);
+			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.emp.update.daily", format.format(this.getRFTNeeded()), format.format(2400 * this.itemFactor / (20 * 60)));
 			this.cycleTimeLeft = getCycleTime();
 			this.energyHandler.updateValues(getRFTNeeded() * 2);
 			this.itemHandler.randomizeTarget();
@@ -60,19 +63,19 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 
 	@Override
 	public void provideItem(ItemStack stack) {
-		this.cycleTimeLeft -= 3600;
-		Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.emp.update.item", this.itemHandler.getTarget().getDisplayName());
+		this.cycleTimeLeft -= 2400 * this.itemFactor;
+		if (updateMessages) Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.emp.update.item", this.itemHandler.getTarget().getDisplayName(), format.format(getCycleTime() / (20D * 60)));
 		this.itemHandler.randomizeTarget();
 	}
 
 	@Override
-	public int getCycleTime() {
-		return super.getCycleTime() * 3 + 3600 * (points / 3);
+	public double getCycleTime() {
+		return super.getCycleTime() * 2 + 2400 * (points / 3);
 	}
 
 	@Override
 	public int getRFTNeeded() {
-		return 3 * (points == 0 ? rfPerTick : floor(0.25 * rfPerTick * points * cycleFactor));
+		return 3 * (points == 0 ? rfPerTick : floor(0.33 * rfPerTick * points * cycleFactor));
 	}
 
 	@Override
@@ -81,7 +84,7 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			entries.add(I18n.format("parabox.status.power", format.format(this.getPower())));
 			entries.add(I18n.format("parabox.status.target", format.format(this.getRFTNeeded() / 2), format.format(this.getRFTNeeded() * 2)));
 			entries.add(I18n.format("parabox.status.item", this.itemHandler.getTarget().getDisplayName()));
-			entries.add(I18n.format("parabox.status.speed", format.format(SpeedFactor.getForPower(this, this.getPower()).getTicksPerTick() / 3)));
+			entries.add(I18n.format("parabox.status.speed", format.format(SpeedFactor.getForPower(this, this.getPower()).getTicksPerTick())));
 			entries.add(I18n.format("parabox.status.cycle", Parabox.ticksToTime(this.getRemainingTicks())));
 			entries.add(I18n.format("parabox.status.points", this.points));
 		} else {

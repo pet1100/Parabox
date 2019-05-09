@@ -77,6 +77,7 @@ public class Parabox {
 			BlacklistedFileUtils.IGNORED.add(s);
 		TileEntityParabox.rfPerTick = config.getInt("RF/t", "general", 400, 1, Integer.MAX_VALUE, "Power usage factor per cycle.");
 		TileEntityParabox.cycleTime = config.getInt("Cycle Time", "general", 12000, 1, Integer.MAX_VALUE, "Tick time for a single cycle.");
+		TileEntityParabox.updateMessages = config.getBoolean("Update Messages", "general", true, "If parabox broadcasts when an item is received.");
 
 		if (config.hasChanged()) config.save();
 		MinecraftForge.EVENT_BUS.register(proxy);

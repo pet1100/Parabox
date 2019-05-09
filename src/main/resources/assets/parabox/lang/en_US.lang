@@ -12,8 +12,8 @@ info.parabox.duplicate=A Parabox already exists at %s.
 info.parabox.active=A Parabox is currently active. This world is temporary!
 info.parabox.backup=A world backup has been initiated. Expect lag.
 info.parabox.update.item=%s has been provided.  Cycle time decreased by 1 minute.  Required item changing...
-info.parabox.emp.update.item=%s has been provided.  Cycle time decreased by 3 minutes.  Required item changing...
-info.parabox.update.daily=You have generated another prestige point. The Empowered Parabox now requires %s items per cycle.
+info.parabox.emp.update.item=%s has been provided.  Cycle time decreased by %s minutes.  Required item changing...
+info.parabox.emp.update.daily=You have generated 3 more prestige points. The Empowered Parabox now requires %s RF/t and has a cycle time of %s minutes.
 
 
 #Status
