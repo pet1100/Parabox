@@ -56,15 +56,13 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 		this.ticksOnline++;
 		if (this.ticksOnline < 0) this.ticksOnline = 0;
 
-		power = energyHandler.getEnergyStored();
-
-		SpeedFactor factor = SpeedFactor.getForPower(this, power);
+		power = this.energyHandler.getEnergyStored();
 
 		if (this.ticksOnline % 20 == 0) {
 			this.sync();
 		}
 
-		this.cycleTimeLeft -= factor.getTicksPerTick();
+		this.cycleTimeLeft -= this.getTicksPerTick();
 		this.energyHandler.setEnergy(0);
 
 		if (this.cycleTimeLeft <= 0) {
@@ -120,7 +118,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 			entries.add(I18n.format("parabox.status.power", format.format(this.getPower())));
 			entries.add(I18n.format("parabox.status.target", format.format(this.getRFTNeeded() / 2), format.format(this.getRFTNeeded() * 2)));
 			entries.add(I18n.format("parabox.status.item", this.itemHandler.getTarget().getDisplayName()));
-			entries.add(I18n.format("parabox.status.speed", format.format(SpeedFactor.getForPower(this, this.getPower()).getTicksPerTick())));
+			entries.add(I18n.format("parabox.status.speed", format.format(this.getTicksPerTick() * 100)));
 			entries.add(I18n.format("parabox.status.cycle", Parabox.ticksToTime(this.getRemainingTicks())));
 			entries.add(I18n.format("parabox.status.points", this.points));
 		} else {
@@ -201,6 +199,10 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public double getCycleTime() {
 		return cycleTime;
+	}
+
+	public double getTicksPerTick() {
+		return SpeedFactor.getForPower(this, energyHandler.getEnergyStored()).getTicksPerTick();
 	}
 
 }

@@ -33,7 +33,8 @@ parabox.status.deactivate_vote=%s has voted to deactivate the Parabox!
 parabox.status.collapse_vote=%s has voted to collapse the world!
 parabox.status.more_votes=More votes are still needed.
 parabox.status.vote_success=All players have voted.
-parabox.status.speed=Speed Factor: %s
+parabox.status.speed=Speed: %s%%
+parabox.status.emp.speed=Speed: %s%% | Item Speed: %s%%
 
 #Buttons
 parabox.button.activate=Activate

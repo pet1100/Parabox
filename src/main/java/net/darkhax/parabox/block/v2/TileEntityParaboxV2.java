@@ -9,11 +9,11 @@ import net.darkhax.parabox.Parabox;
 import net.darkhax.parabox.block.TileEntityParabox;
 import net.darkhax.parabox.util.ParaboxItemManager;
 import net.darkhax.parabox.util.ParaboxUserData;
-import net.darkhax.parabox.util.SpeedFactor;
 import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
 public class TileEntityParaboxV2 extends TileEntityParabox {
@@ -30,17 +30,16 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 		this.ticksOnline++;
 		if (this.ticksOnline < 0) this.ticksOnline = 0;
 
-		power = energyHandler.getEnergyStored();
-
-		SpeedFactor factor = SpeedFactor.getForPower(this, power);
+		power = this.energyHandler.getEnergyStored();
 
 		if (this.ticksOnline % 20 == 0) {
 			this.sync();
 		}
 
-		this.cycleTimeLeft -= Math.min(1, factor.getTicksPerTick());
+		this.cycleTimeLeft -= Math.min(1, this.getTicksPerTick());
+		this.itemFactor = Math.max(1, this.getTicksPerTick());
 		this.energyHandler.setEnergy(0);
-		this.itemFactor = Math.max(1, factor.getTicksPerTick());
+		if (this.itemFactor > 1) this.itemFactor *= 1.25;
 
 		if (this.cycleTimeLeft <= 0) {
 			this.points += 3;
@@ -87,13 +86,25 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			entries.add(I18n.format("parabox.status.power", format.format(this.getPower())));
 			entries.add(I18n.format("parabox.status.target", format.format(this.getRFTNeeded() / 2), format.format(this.getRFTNeeded() * 2)));
 			entries.add(I18n.format("parabox.status.item", this.itemHandler.getTarget().getDisplayName()));
-			entries.add(I18n.format("parabox.status.speed", format.format(SpeedFactor.getForPower(this, this.getPower()).getTicksPerTick())));
+			entries.add(I18n.format("parabox.status.emp.speed", format.format(Math.min(1, this.getTicksPerTick()) * 100), format.format(this.itemFactor * 100)));
 			entries.add(I18n.format("parabox.status.cycle", Parabox.ticksToTime(this.getRemainingTicks())));
 			entries.add(I18n.format("parabox.status.points", this.points));
 		} else {
 			entries.add(I18n.format("parabox.status.offline"));
 		}
 		return entries;
+	}
+
+	@Override
+	public void writeNBT(NBTTagCompound dataTag) {
+		super.writeNBT(dataTag);
+		dataTag.setDouble("ItemFactor", this.itemFactor);
+	}
+
+	@Override
+	public void readNBT(NBTTagCompound dataTag) {
+		super.readNBT(dataTag);
+		this.itemFactor = dataTag.getDouble("ItemFactor");
 	}
 
 }
