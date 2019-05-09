@@ -34,7 +34,10 @@ public class ItemBlockParabox extends ItemBlock {
 		}
 
 		if (super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState)) {
-			if (!world.isRemote) WorldSpaceTimeManager.getWorldData().setParabox(pos);
+			if (!world.isRemote) {
+				WorldSpaceTimeManager.getWorldData().setParabox(pos);
+				Parabox.sendMessage(player, TextFormatting.GREEN, "info.parabox.created", pos);
+			}
 			return true;
 		}
 

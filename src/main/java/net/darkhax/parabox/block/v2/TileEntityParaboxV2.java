@@ -38,7 +38,7 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			this.sync();
 		}
 
-		this.cycleTimeLeft -= factor.getTicksPerTick();
+		this.cycleTimeLeft -= Math.min(1, factor.getTicksPerTick());
 		this.energyHandler.setEnergy(0);
 		this.itemFactor = Math.max(1, factor.getTicksPerTick());
 
@@ -47,7 +47,7 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			for (Entry<UUID, ParaboxUserData> data : WorldSpaceTimeManager.getWorldData().getUserData())
 				data.getValue().setPoints(this.points);
 			WorldSpaceTimeManager.saveCustomWorldData();
-			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.emp.update.daily", format.format(this.getRFTNeeded()), format.format(2400 * this.itemFactor / (20 * 60)));
+			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.emp.update.daily", format.format(this.getRFTNeeded()), format.format(getCycleTime() / (20D * 60)));
 			this.cycleTimeLeft = getCycleTime();
 			this.energyHandler.updateValues(getRFTNeeded() * 2);
 			this.itemHandler.randomizeTarget();
@@ -64,8 +64,11 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 	@Override
 	public void provideItem(ItemStack stack) {
 		this.cycleTimeLeft -= 2400 * this.itemFactor;
-		if (updateMessages) Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.emp.update.item", this.itemHandler.getTarget().getDisplayName(), format.format(getCycleTime() / (20D * 60)));
+		String oldName = this.itemHandler.getTarget().getDisplayName();
 		this.itemHandler.randomizeTarget();
+		if (updateMessages) {
+			Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.emp.update.item", oldName, format.format(2400 * this.itemFactor / (20 * 60)), this.itemHandler.getTarget().getDisplayName());
+		}
 	}
 
 	@Override

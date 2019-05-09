@@ -110,8 +110,9 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 	public void provideItem(ItemStack stack) {
 		this.cycleTimeLeft -= 1200;
-		if (updateMessages) Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.update.item", this.itemHandler.getTarget().getDisplayName());
+		String oldName = this.itemHandler.getTarget().getDisplayName();
 		this.itemHandler.randomizeTarget();
+		if (updateMessages) Parabox.sendMessage(TextFormatting.GOLD, "info.parabox.update.item", oldName, this.itemHandler.getTarget().getDisplayName());
 	}
 
 	public List<String> getInfo(List<String> entries, EntityPlayer player) {

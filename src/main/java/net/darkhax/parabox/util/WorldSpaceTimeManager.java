@@ -212,7 +212,7 @@ public class WorldSpaceTimeManager {
 	public static void login(PlayerLoggedInEvent event) {
 		WorldSpaceTimeManager.getWorldData().getOrCreateData(event.player.getGameProfile().getId());
 		FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0].loadedTileEntityList.forEach(e -> {
-			if (e instanceof TileEntityParabox && ((TileEntityParabox) e).isActive()) Parabox.sendMessage(event.player, TextFormatting.GOLD, "info.parabox.active");
+			if (e instanceof TileEntityParabox && ((TileEntityParabox) e).isActive()) Parabox.sendMessage(event.player, TextFormatting.GOLD, "info.parabox.active", e.getPos());
 		});
 	}
 

@@ -21,6 +21,7 @@ import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
@@ -106,6 +107,7 @@ public class Parabox {
 	public static void sendMessage(TextFormatting color, String text, Object... args) {
 		MinecraftServer s = FMLCommonHandler.instance().getMinecraftServerInstance();
 		if (s != null) {
+			args = fixBlockPos(args);
 			final TextComponentTranslation translation = new TextComponentTranslation(text, args);
 			translation.getStyle().setColor(color);
 			s.getPlayerList().sendMessage(translation, false);
@@ -114,10 +116,21 @@ public class Parabox {
 
 	public static void sendMessage(EntityPlayer player, TextFormatting color, String text, Object... args) {
 		if (!player.world.isRemote) {
+			args = fixBlockPos(args);
 			final TextComponentTranslation translation = new TextComponentTranslation(text, args);
 			translation.getStyle().setColor(color);
 			player.sendStatusMessage(translation, false);
 		}
+	}
+
+	static Object[] fixBlockPos(Object[] args) {
+		for (int i = 0; i < args.length; i++) {
+			if (args[i] instanceof BlockPos) {
+				BlockPos pos = (BlockPos) args[i];
+				args[i] = String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ());
+			}
+		}
+		return args;
 	}
 
 	public static String ticksToTime(int ticks) {
