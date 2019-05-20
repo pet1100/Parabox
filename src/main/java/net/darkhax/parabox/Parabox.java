@@ -58,6 +58,8 @@ public class Parabox {
 
 	static Configuration config;
 
+	public static String shutdownCmd = "";
+
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
 		NETWORK.register(PacketActivate.class, Side.SERVER);
@@ -79,6 +81,8 @@ public class Parabox {
 		TileEntityParabox.rfPerTick = config.getInt("RF/t", "general", 400, 1, Integer.MAX_VALUE, "Power usage factor per cycle.");
 		TileEntityParabox.cycleTime = config.getInt("Cycle Time", "general", 12000, 1, Integer.MAX_VALUE, "Tick time for a single cycle.");
 		TileEntityParabox.updateMessages = config.getBoolean("Update Messages", "general", true, "If parabox broadcasts when an item is received.");
+
+		shutdownCmd = config.getString("Shutdown Command", "general", "", "A command that will be executed instead of a normal shutdown.  This command MUST shut down the server.  Commands that do not reset the server may result in fatal world breakages, do not touch this unless you are absolutely sure of what you are doing.").trim();
 
 		if (config.hasChanged()) config.save();
 		MinecraftForge.EVENT_BUS.register(proxy);

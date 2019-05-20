@@ -63,7 +63,9 @@ public class WorldHelper {
 	}
 
 	public static void shutdown() {
-
-		FMLCommonHandler.instance().getMinecraftServerInstance().initiateShutdown();
+		if (!Parabox.shutdownCmd.isEmpty()) {
+			MinecraftServer svr = FMLCommonHandler.instance().getMinecraftServerInstance();
+			svr.commandManager.executeCommand(svr, Parabox.shutdownCmd);
+		} else FMLCommonHandler.instance().getMinecraftServerInstance().initiateShutdown();
 	}
 }
