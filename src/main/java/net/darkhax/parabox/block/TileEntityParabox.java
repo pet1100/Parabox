@@ -41,6 +41,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	protected int points = 0;
 	protected int ticksOnline = 0;
 	protected int power = 0;
+	protected int redstoneValue = 0;
 
 	protected VotingHandler voter = new VotingHandler(this);
 	protected EnergyHandlerParabox energyHandler = new EnergyHandlerParabox(rfPerTick * 2, rfPerTick * 2);
@@ -60,6 +61,10 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 
 		if (this.ticksOnline % 20 == 0) {
 			this.sync();
+		}
+
+		if (this.ticksOnline % 200 == 0) {
+			this.updateRedstone();
 		}
 
 		this.cycleTimeLeft -= this.getTicksPerTick();
@@ -202,7 +207,19 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	}
 
 	public double getTicksPerTick() {
-		return SpeedFactor.getForPower(this, energyHandler.getEnergyStored()).getTicksPerTick();
+		return SpeedFactor.getForPower(this, getPower()).getTicksPerTick();
+	}
+
+	public void updateRedstone() {
+		double sp = (double) getPower() / getRFTNeeded();
+		if (sp >= 1) redstoneValue = 0;
+		else if (sp < 0.5) {
+			redstoneValue = 15;
+		} else {
+			sp -= 0.5;
+			redstoneValue = 15 - MathHelper.ceil(sp / (1D / 30));
+		}
+		world.notifyNeighborsOfStateChange(pos, Parabox.parabox, false);
 	}
 
 }

@@ -11,6 +11,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockParabox extends BlockTileEntity {
@@ -58,7 +59,7 @@ public class BlockParabox extends BlockTileEntity {
 		return false;
 	}
 
-	public static TileEntityParabox getParabox(World world, BlockPos pos) {
+	public static TileEntityParabox getParabox(IBlockAccess world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
 		return tile instanceof TileEntityParabox ? (TileEntityParabox) tile : null;
 	}
@@ -66,5 +67,17 @@ public class BlockParabox extends BlockTileEntity {
 	@Override
 	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
+	}
+
+	@Override
+	public boolean canProvidePower(IBlockState state) {
+		return true;
+	}
+
+	@Override
+	public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		TileEntityParabox te = getParabox(world, pos);
+		if (te == null || !te.isActive()) return 0;
+		return te.redstoneValue;
 	}
 }

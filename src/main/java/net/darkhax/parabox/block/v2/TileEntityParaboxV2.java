@@ -36,6 +36,10 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			this.sync();
 		}
 
+		if (this.ticksOnline % 200 == 0) {
+			this.updateRedstone();
+		}
+
 		this.cycleTimeLeft -= Math.min(1, this.getTicksPerTick());
 		this.itemFactor = Math.max(1, this.getTicksPerTick());
 		this.energyHandler.setEnergy(0);

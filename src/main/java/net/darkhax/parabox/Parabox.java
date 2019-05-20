@@ -55,9 +55,8 @@ public class Parabox {
 
 	@SidedProxy(clientSide = "net.darkhax.parabox.proxy.ClientProxy", serverSide = "net.darkhax.parabox.proxy.Proxy")
 	public static Proxy proxy;
-
-	static Configuration config;
-
+	public static Configuration config;
+	public static BlockParabox parabox;
 	public static String shutdownCmd = "";
 
 	@EventHandler
@@ -67,7 +66,7 @@ public class Parabox {
 		NETWORK.register(PacketRefreshGui.class, Side.CLIENT);
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
-		BlockParabox block = new BlockParabox();
+		BlockParabox block = parabox = new BlockParabox();
 		REGISTRY.registerBlock(block, new ItemBlockParabox(block), "parabox");
 		GameRegistry.registerTileEntity(TileEntityParabox.class, block.getRegistryName());
 
