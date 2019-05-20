@@ -90,7 +90,7 @@ public class TileEntityParaboxV2 extends TileEntityParabox {
 			entries.add(I18n.format("parabox.status.power", format.format(this.getPower())));
 			entries.add(I18n.format("parabox.status.target", format.format(this.getRFTNeeded() / 2), format.format(this.getRFTNeeded() * 2)));
 			entries.add(I18n.format("parabox.status.item", this.itemHandler.getTarget().getDisplayName()));
-			entries.add(I18n.format("parabox.status.emp.speed", format.format(Math.min(1, this.getTicksPerTick()) * 100), format.format(this.itemFactor * 100)));
+			entries.add(I18n.format("parabox.status.emp.speed", pct.format(Math.min(1, this.getTicksPerTick()) * 100), pct.format(this.itemFactor * 100)));
 			entries.add(I18n.format("parabox.status.cycle", Parabox.ticksToTime(this.getRemainingTicks())));
 			entries.add(I18n.format("parabox.status.points", this.points));
 		} else {

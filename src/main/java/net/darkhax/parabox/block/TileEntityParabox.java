@@ -14,7 +14,6 @@ import net.darkhax.parabox.handler.ItemHandlerParabox;
 import net.darkhax.parabox.handler.VotingHandler;
 import net.darkhax.parabox.util.ParaboxItemManager;
 import net.darkhax.parabox.util.ParaboxUserData;
-import net.darkhax.parabox.util.SpeedFactor;
 import net.darkhax.parabox.util.WorldSpaceTimeManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,7 +32,8 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	public static int cycleTime = 12000;
 	public static int rfPerTick = 400;
 	public static float cycleFactor = 2F;
-	public static NumberFormat format = NumberFormat.getNumberInstance(Locale.getDefault());
+	public static NumberFormat format = NumberFormat.getNumberInstance(Locale.ROOT);
+	public static NumberFormat pct = NumberFormat.getIntegerInstance(Locale.ROOT);
 	public static boolean updateMessages = true;
 
 	protected boolean active = false;
@@ -123,7 +123,7 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 			entries.add(I18n.format("parabox.status.power", format.format(this.getPower())));
 			entries.add(I18n.format("parabox.status.target", format.format(this.getRFTNeeded() / 2), format.format(this.getRFTNeeded() * 2)));
 			entries.add(I18n.format("parabox.status.item", this.itemHandler.getTarget().getDisplayName()));
-			entries.add(I18n.format("parabox.status.speed", format.format(this.getTicksPerTick() * 100)));
+			entries.add(I18n.format("parabox.status.speed", pct.format(this.getTicksPerTick() * 100)));
 			entries.add(I18n.format("parabox.status.cycle", Parabox.ticksToTime(this.getRemainingTicks())));
 			entries.add(I18n.format("parabox.status.points", this.points));
 		} else {
@@ -207,7 +207,13 @@ public class TileEntityParabox extends TileEntityBasicTickable {
 	}
 
 	public double getTicksPerTick() {
-		return SpeedFactor.getForPower(this, getPower()).getTicksPerTick();
+		double sp = (double) getPower() / getRFTNeeded();
+		if (sp >= 1) {
+			double bonus = (sp - 1) / 5;
+			return 1 + bonus;
+		}
+		if (sp < 0.5) return 0;
+		return sp;
 	}
 
 	public void updateRedstone() {
