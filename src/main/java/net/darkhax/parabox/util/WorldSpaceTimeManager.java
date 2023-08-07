@@ -99,10 +99,7 @@ public class WorldSpaceTimeManager {
 	}
 
 	public static void initiateWorldBackup() {
-		if (!getWorldData().getBackupFile().exists() && !isSaving) {
-			Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.backup");
-			requireSaving = true;
-		}
+		Parabox.sendMessage(TextFormatting.LIGHT_PURPLE, "info.parabox.backup.disabled");
 	}
 
 	public static void triggerCollapse(WorldServer server) {
@@ -188,7 +185,6 @@ public class WorldSpaceTimeManager {
 			try {
 
 				disableSaving();
-				isSaving = true;
 				requireSaving = false;
 				WorldHelper.saveWorld();
 
